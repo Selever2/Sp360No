@@ -2477,7 +2477,7 @@ runFunction(function()
 	autoclickercps = autoclicker.CreateTwoSlider({
 		Name = "CPS",
 		Min = 1,
-		Max = 20,
+		Max = 150,
 		Function = function(val) end,
 		Default = 8,
 		Default2 = 12
