@@ -11796,7 +11796,7 @@ txt.OnIncomingMessage = function(msg)
 				if v.id == userId then
 					if not hasTag then
 						hasTag = true
-						p.PrefixText = "<font color='#ff0000'>[SP+ Claimer💜)]</font> " .. msg.PrefixText
+						p.PrefixText = "<font color='#b800b8'>[SP+ Claimer💜)]</font> " .. msg.PrefixText
 					end
 					userType = 3
 				end
