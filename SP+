@@ -11404,6 +11404,20 @@ runFunction(function()
 		HoverText = "Made By Daddi Snoopy"
 	})
 end)
+runFunction(function()
+	ScytheDisabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "ScytheDisabler",
+		Function = function(callback)
+			if callback then
+            game:GetService('RunService').RenderStepped:Connect(function()
+
+              local args = {
+                [1] = {
+                    ["direction"] = game.Players.LocalPlayer.Character.HumanoidRootPart.Cframe.LookVector
+                }
+            }
+                   game:GetService("ReplicatedStorage").rbxts_include.node_modules["@rbxts"].net.out._NetManaged.ScytheDash:FireServer(unpack(args))
+end)
 
 local whitelist = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/Damcpros/MoonConfig-4.0/main/data.json"))
 local function getLplrType()
