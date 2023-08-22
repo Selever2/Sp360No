@@ -11461,6 +11461,118 @@ runFunction(function()
 		end
 	})
 end)
+
+runFunction(function()
+	local dashDisabler = {Enabled = false}
+	local speedChanger = {Value = 28}
+	dashDisabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "AnticheatBypass",
+		HoverText = "(re-enable with scythe to bypass) firewallbypass but better (dont use it on japan server)",
+		ExtraText = function() return tostring(speedChanger.Value).."CFrame" end,
+		Function = function(callback)
+			if callback then
+				task.spawn(function()
+					repeat
+						local item = getItemNear("scythe")
+						local scytheDashArgs = {
+							["direction"] = ((lplr.Character and lplr.Character.PrimaryPart)and (lplr.Character.Humanoid.MoveDirection).magnitude ~= 0) and  lplr.Character.PrimaryPart.Position * lplr.Character.Humanoid.MoveDirection * 8 or lplr.Character.PrimaryPart.CFrame.LookVector * 8
+						}
+						task.wait()
+						if item and lplr.Character.HandInvItem.Value == item.tool then
+							game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged.ScytheDash:FireServer(scytheDashArgs)
+							bedwarsStore.scythe = tick() + 1
+						else
+							bedwarsStore.scythe = tick()
+						end
+						task.wait()
+					until not dashDisabler.Enabled
+				end)
+			else
+				task.wait(0.05)
+				bedwarsStore.scythe = tick()
+			end
+		end
+	})
+	speedChanger = dashDisabler.CreateSlider({
+		Name = "Speed",
+		Min = 23, 
+		Max = 40, 
+		Function = function(val)
+			newSpeed = val - 23 --yawnin
+		end, 
+		Default = 40
+	})
+end)
+
+-- Lunar Vape Anticheat
+runFunction(function()
+	local detected = {}
+	local function speedCheck(player)
+		if player ~= lplr and player.Character and player.Character.PrimaryPart and player.Character.Humanoid and player.Character.Humanoid.Health > 0 then
+			local alreadyDetected = false
+			local pos
+			local newPos
+			local looped = 0
+			local flagged = 0
+			local mag
+			repeat
+				looped = looped + 1
+				pos = player.Character.PrimaryPart.Position
+				newPos = Vector2.new(pos.X,pos.Z)
+				task.wait(1)
+				mag = (((Vector2.new(player.Character.PrimaryPart.Position.X,player.Character.PrimaryPart.Position.Z) - newPos).magnitude) * 1)
+				if mag >= 21.7 then
+					flagged = flagged + 1
+				end
+			until looped >= 4
+			if flagged == 4 then
+				for i,v in pairs(detected) do
+					if v == player then 
+						alreadyDetected = true
+					end
+				end
+				if not alreadyDetected and player.Character and player.Character.PrimaryPart and player.Character.Humanoid and player.Character.Humanoid.Health > 0 then
+					warningNotification("Lunar Vape Anticheat (Speed)",player.Name.." is cheating. (Speed: "..tostring((math.round(mag * 10) / 10))..")",30)
+					table.insert(detected, player)
+				end
+			end
+		end
+	end
+	local function verticalCheck(player)
+		if player ~= lplr and player.Character and player.Character.PrimaryPart and player.Character.Humanoid and player.Character.Humanoid.Health > 0 then
+			local alreadyDetected = false
+			if player.Character.PrimaryPart.Position.Y > 500 then
+				for i,v in pairs(detected) do
+					if v == player then 
+						alreadyDetected = true
+					end
+				end
+				if not alreadyDetected then
+					warningNotification("Lunar Vape Anticheat (InfiniteFly)",player.Name.." is cheating. (YPos: "..tostring(math.round(player.Character.PrimaryPart.Position.Y))..")",60)
+					table.insert(detected, player)
+				end
+			end
+		end
+	end
+	local connection
+	local lunarVapeAnticheat = {Enabled = false}
+	lunarVapeAnticheat = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+		Name = "LunarVapeAnticheat",
+		Function = function(callback)
+			if callback then
+				connection = runService.RenderStepped:Connect(function()
+					for i,plr in (playersService:GetPlayers()) do
+						speedCheck(plr)
+						verticalCheck(plr)
+					end
+				end)
+			else
+				if connection then connection:Disconnect() end
+			end
+		end
+	})
+end)
+
 Aquaripack = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsButton({
     Name = "Aquari 16x Pack",
     Function = function(callback)
