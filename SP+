@@ -11574,46 +11574,6 @@ runFunction(function()
 end)
 
 runFunction(function()
-	-- Player TP
-	local PlayerTP = {Enabled = false}
-	local playerRespawnConnection
-	local chosenPlayer
-	PlayerTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "PlayerTP",
-		HoverText = "Resets then tweens to nearest player.",
-		Function = function(callback)
-			if callback then
-				for i,v in pairs(playersService:GetPlayers()) do
-					if v.Name ~= lplr.Name and v.TeamColor ~= lplr.TeamColor then
-						if v.Character and v.Character.Humanoid and v.Character.Humanoid.Health ~= 0 then
-                            if chosenPlayer then
-                                if (v.Character.PrimaryPart.Position - lplr.Character.PrimaryPart.Position).magnitude < (chosenPlayer.Character.PrimaryPart.Position - lplr.Character.PrimaryPart.Position).magnitude then
-                                    chosenPlayer = v
-                                end
-                            else chosenPlayer = v end
-						end
-					end
-				end	
-				if chosenPlayer then
-					lplr.Character.Humanoid.Health = 0
-					playerRespawnConnection = lplr.CharacterAdded:Connect(function()
-						repeat task.wait() until lplr.Character.PrimaryPart
-						local toPlayerTween = tweenService:Create(lplr.Character.PrimaryPart, tweenData, {CFrame = chosenPlayer.Character.PrimaryPart.CFrame})
-						toPlayerTween:Play()
-						chosenPlayer = nil
-						playerRespawnConnection:Disconnect()
-						PlayerTP.ToggleButton(false)
-					end)
-				else 
-					warningNotification("Lunar Vape (PlayerTP)","No player found.",3)
-					PlayerTP.ToggleButton(false)
-				end
-			else
-				if playerRespawnConnection then playerRespawnConnection:Disconnect() end
-			end
-		end
-	})
-
 	-- Mouse TP
 	local MouseTP = {Enabled = false}
 	-- credits to xylex for the clicktp in Universal.lua
