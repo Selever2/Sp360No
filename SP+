@@ -11573,6 +11573,221 @@ runFunction(function()
 	})
 end)
 
+runFunction(function()
+	local tweenData = TweenInfo.new(0.663,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut,0,false,0.237)
+
+	-- Bed TP
+	local BedTP = {Enabled = false}
+	local bedRespawnConnection
+	local chosenBed
+
+	BedTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "BedTP",
+		HoverText = "Resets then tweens to nearest bed.",
+		Function = function(callback)
+			if callback then
+				for i,v in pairs(workspace:GetChildren()) do
+					if v.Name == "bed" and v.Covers.BrickColor ~= lplr.TeamColor then
+                        if chosenBed then
+                            if (v.Covers.Position - lplr.Character.PrimaryPart.Position).magnitude < (chosenBed.Covers.Position - lplr.Character.PrimaryPart.Position).magnitude then
+                                chosenBed = v
+                            end
+                        else chosenBed = v end
+					end
+				end	
+				if chosenBed then
+					lplr.Character.Humanoid.Health = 0
+					bedRespawnConnection = lplr.CharacterAdded:Connect(function()
+						repeat task.wait() until lplr.Character.PrimaryPart
+						local bedTween = tweenService:Create(lplr.Character.PrimaryPart, tweenData, {CFrame = chosenBed.CFrame * CFrame.new(0,3.5,0)})
+						bedTween:Play()
+						chosenBed = nil
+						bedRespawnConnection:Disconnect()
+						BedTP.ToggleButton(false)
+					end)
+				else 
+					warningNotification("Lunar Vape (BedTP)","No bed found.",3)
+					BedTP.ToggleButton(false)
+				end
+			else
+				if bedRespawnConnection then bedrespawnConnection:Disconnect() end
+			end
+		end
+	})
+
+	-- Player TP
+	local PlayerTP = {Enabled = false}
+	local playerRespawnConnection
+	local chosenPlayer
+	PlayerTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "PlayerTP",
+		HoverText = "Resets then tweens to nearest player.",
+		Function = function(callback)
+			if callback then
+				for i,v in pairs(playersService:GetPlayers()) do
+					if v.Name ~= lplr.Name and v.TeamColor ~= lplr.TeamColor then
+						if v.Character and v.Character.Humanoid and v.Character.Humanoid.Health ~= 0 then
+                            if chosenPlayer then
+                                if (v.Character.PrimaryPart.Position - lplr.Character.PrimaryPart.Position).magnitude < (chosenPlayer.Character.PrimaryPart.Position - lplr.Character.PrimaryPart.Position).magnitude then
+                                    chosenPlayer = v
+                                end
+                            else chosenPlayer = v end
+						end
+					end
+				end	
+				if chosenPlayer then
+					lplr.Character.Humanoid.Health = 0
+					playerRespawnConnection = lplr.CharacterAdded:Connect(function()
+						repeat task.wait() until lplr.Character.PrimaryPart
+						local toPlayerTween = tweenService:Create(lplr.Character.PrimaryPart, tweenData, {CFrame = chosenPlayer.Character.PrimaryPart.CFrame})
+						toPlayerTween:Play()
+						chosenPlayer = nil
+						playerRespawnConnection:Disconnect()
+						PlayerTP.ToggleButton(false)
+					end)
+				else 
+					warningNotification("Lunar Vape (PlayerTP)","No player found.",3)
+					PlayerTP.ToggleButton(false)
+				end
+			else
+				if playerRespawnConnection then playerRespawnConnection:Disconnect() end
+			end
+		end
+	})
+
+	-- Mouse TP
+	local MouseTP = {Enabled = false}
+	-- credits to xylex for the clicktp in Universal.lua
+	-- also dont call me a skid its still xylex's script (Vape V4)
+	local mouseTPRaycastParams = RaycastParams.new()
+	mouseTPRaycastParams.RespectCanCollide = true
+	mouseTPRaycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+	local selectedPosition
+	local mouseTPRespawnConnection
+	
+	MouseTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "MouseTP",
+		HoverText = "Resets then tweens to where-ever your mouse was pointing.",
+		Function = function(callback)
+			if callback then
+				mouseTPRaycastParams.FilterDescendantsInstances = {lplr.Character, gameCamera, workspace.Part}
+				local ray = workspace:Raycast(gameCamera.CFrame.p, lplr:GetMouse().UnitRay.Direction * 10000, ClickTPRaycast)
+				selectedPosition = ray and ray.Position
+				if selectedPosition then
+					lplr.Character.Humanoid.Health = 0
+					mouseTPRespawnConnection = lplr.CharacterAdded:Connect(function()
+						repeat task.wait() until lplr.Character.PrimaryPart
+						local mouseTPTween = tweenService:Create(lplr.Character.PrimaryPart, tweenData, {CFrame = CFrame.new(selectedPosition.X,selectedPosition.Y + 1.8,selectedPosition.Z)})
+						mouseTPTween:Play()
+						selectedPosition = nil
+						mouseTPRespawnConnection:Disconnect()
+						MouseTP.ToggleButton(false)
+					end)
+				else 
+					warningNotification("Lunar Vape (MouseTP)","Error saving position mouse was pointing at.",4)
+					MouseTP.ToggleButton(false)
+				end				
+			else
+				if mouseTPRespawnConnection then mouseTPRespawnConnection:Disconnect() end
+			end
+		end
+	})
+end)
+
+--[[runFunction(function()
+	local ClickTP = {Enabled = false}
+	local ClickTPMethod = {Value = "Normal"}
+	local ClickTPDelay = {Value = 1}
+	local ClickTPAmount = {Value = 1}
+	local ClickTPVertical = {Enabled = true}
+	local ClickTPVelocity = {Enabled = false}
+	local ClickTPRaycast = RaycastParams.new()
+	ClickTPRaycast.RespectCanCollide = true
+	ClickTPRaycast.FilterType = Enum.RaycastFilterType.Blacklist
+	ClickTP = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+		Name = "MouseTP", 
+		Function = function(callback) 
+			if callback then
+				RunLoops:BindToHeartbeat("MouseTP", function()
+					if entityLibrary.isAlive and ClickTPVelocity.Enabled and ClickTPMethod.Value == "SlowTP" then 
+						entityLibrary.character.HumanoidRootPart.Velocity = Vector3.zero
+					end
+				end)
+				if entityLibrary.isAlive then 
+					ClickTPRaycast.FilterDescendantsInstances = {lplr.Character, gameCamera}
+					local ray = workspace:Raycast(gameCamera.CFrame.p, lplr:GetMouse().UnitRay.Direction * 10000, ClickTPRaycast)
+					local selectedPosition = ray and ray.Position + Vector3.new(0, entityLibrary.character.Humanoid.HipHeight + (entityLibrary.character.HumanoidRootPart.Size.Y / 2), 0)
+					if selectedPosition then 
+						if ClickTPMethod.Value == "Normal" then
+							entityLibrary.character.HumanoidRootPart.CFrame = CFrame.new(selectedPosition)
+							ClickTP.ToggleButton(false)
+						else
+							task.spawn(function()
+								repeat
+									if entityLibrary.isAlive then 
+										local newpos = (selectedPosition - entityLibrary.character.HumanoidRootPart.CFrame.p).Unit
+										newpos = newpos == newpos and newpos * math.min((selectedPosition - entityLibrary.character.HumanoidRootPart.CFrame.p).Magnitude, ClickTPAmount.Value) or Vector3.zero
+										entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + Vector3.new(newpos.X, (ClickTPVertical.Enabled and newpos.Y or 0), newpos.Z)
+										if (selectedPosition - entityLibrary.character.HumanoidRootPart.CFrame.p).Magnitude <= 5 then 
+											break
+										end
+									end
+									task.wait(ClickTPDelay.Value / 100)
+								until entityLibrary.isAlive and (selectedPosition - entityLibrary.character.HumanoidRootPart.CFrame.p).Magnitude <= 5 or not ClickTP.Enabled
+								if ClickTP.Enabled then ClickTP.ToggleButton(false) end
+							end)
+						end
+					else
+						ClickTP.ToggleButton(false)
+						warningNotification("ClickTP", "No position found.", 1)
+					end
+				else
+					if ClickTP.Enabled then ClickTP.ToggleButton(false) end
+				end
+			else
+				RunLoops:UnbindFromHeartbeat("MouseTP")
+			end
+		end, 
+		HoverText = "Teleports to where your mouse is."
+	})
+	ClickTPMethod = ClickTP.CreateDropdown({
+		Name = "Method",
+		List = {"Normal", "SlowTP"},
+		Function = function(val)
+			if ClickTPAmount.Object then ClickTPAmount.Object.Visible = val == "SlowTP" end
+			if ClickTPDelay.Object then ClickTPDelay.Object.Visible = val == "SlowTP" end
+			if ClickTPVertical.Object then ClickTPVertical.Object.Visible = val == "SlowTP" end
+			if ClickTPVelocity.Object then ClickTPVelocity.Object.Visible = val == "SlowTP" end
+		end
+	})
+	ClickTPAmount = ClickTP.CreateSlider({
+		Name = "Amount",
+		Min = 1,
+		Max = 50,
+		Function = function() end
+	})
+	ClickTPAmount.Object.Visible = false
+	ClickTPDelay = ClickTP.CreateSlider({
+		Name = "Delay",
+		Min = 1,
+		Max = 50,
+		Function = function() end
+	})
+	ClickTPDelay.Object.Visible = false
+	ClickTPVertical = ClickTP.CreateToggle({
+		Name = "Vertical",
+		Default = true,
+		Function = function() end
+	})
+	ClickTPVertical.Object.Visible = false
+	ClickTPVelocity = ClickTP.CreateToggle({
+		Name = "No Velocity",
+		Default = true,
+		Function = function() end
+	})
+	ClickTPVelocity.Object.Visible = false
+end)]]
+
 Aquaripack = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsButton({
     Name = "Aquari 16x Pack",
     Function = function(callback)
