@@ -11574,47 +11574,6 @@ runFunction(function()
 end)
 
 runFunction(function()
-	local tweenData = TweenInfo.new(0.663,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut,0,false,0.237)
-
-	-- Bed TP
-	local BedTP = {Enabled = false}
-	local bedRespawnConnection
-	local chosenBed
-
-	BedTP = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "BedTP",
-		HoverText = "Resets then tweens to nearest bed.",
-		Function = function(callback)
-			if callback then
-				for i,v in pairs(workspace:GetChildren()) do
-					if v.Name == "bed" and v.Covers.BrickColor ~= lplr.TeamColor then
-                        if chosenBed then
-                            if (v.Covers.Position - lplr.Character.PrimaryPart.Position).magnitude < (chosenBed.Covers.Position - lplr.Character.PrimaryPart.Position).magnitude then
-                                chosenBed = v
-                            end
-                        else chosenBed = v end
-					end
-				end	
-				if chosenBed then
-					lplr.Character.Humanoid.Health = 0
-					bedRespawnConnection = lplr.CharacterAdded:Connect(function()
-						repeat task.wait() until lplr.Character.PrimaryPart
-						local bedTween = tweenService:Create(lplr.Character.PrimaryPart, tweenData, {CFrame = chosenBed.CFrame * CFrame.new(0,3.5,0)})
-						bedTween:Play()
-						chosenBed = nil
-						bedRespawnConnection:Disconnect()
-						BedTP.ToggleButton(false)
-					end)
-				else 
-					warningNotification("Lunar Vape (BedTP)","No bed found.",3)
-					BedTP.ToggleButton(false)
-				end
-			else
-				if bedRespawnConnection then bedrespawnConnection:Disconnect() end
-			end
-		end
-	})
-
 	-- Player TP
 	local PlayerTP = {Enabled = false}
 	local playerRespawnConnection
