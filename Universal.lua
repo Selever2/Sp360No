@@ -6106,30 +6106,52 @@ runFunction(function()
 end)
 
 runFunction(function()
-	local infJump = {Enabled = false}
-	local jumpHold = {Enabled = false}
-	local connection
-	infJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "LInfiniteJump",
-		Function = function(callback)
-			if callback then
-				connection = inputService.InputBegan:Connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space and (not inputService:GetFocusedTextBox()) and lplr.Character.Humanoid.Health > 0 then
-						repeat
-							task.wait()
-							lplr.Character:WaitForChild("Humanoid"):ChangeState("Jumping")
-						until (not infJump.Enabled) or (not jumpHold.Enabled) or (inputService:GetFocusedTextBox()) or (not inputService:IsKeyDown(Enum.KeyCode.Space))
-					end
-				end)
-			else
-				if connection then connection:Disconnect() end
-			end
-		end
-	})
-	jumpHold = infJump.CreateToggle({
-		Name = "Hold to jump",
-		Function = function() end,
-	})
+    local connection
+    local jumpConnection
+    local jumping = false
+
+    InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+        Name = "UInfiniteJump",
+        Function = function(callback)
+            if callback then
+                connection = game:GetService("UserInputService").InputBegan:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        if not game:GetService("UserInputService"):GetFocusedTextBox() then
+                            jumping = true
+                            local character = game:GetService("Players").LocalPlayer.Character
+                            local humanoid = character:FindFirstChildOfClass("Humanoid")
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoid and humanoidRootPart then
+                                jumpConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                                    while jumping do
+                                        humanoid:ChangeState("Jumping")
+                                        humanoidRootPart.Velocity = Vector3.new(humanoidRootPart.Velocity.X, 80, humanoidRootPart.Velocity.Z)
+                                        wait(0.01)
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end)
+
+                game:GetService("UserInputService").InputEnded:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        jumping = false
+                        if jumpConnection then
+                            jumpConnection:Disconnect()
+                        end
+                    end
+                end)
+            else
+                if connection then
+                    connection:Disconnect()
+                end
+                if jumpConnection then
+                    jumpConnection:Disconnect()
+                end
+            end
+        end
+    })
 end)
 
 runFunction(function()
