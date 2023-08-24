@@ -13550,5 +13550,3 @@ txt.OnIncomingMessage = function(msg)
 
 	return p
 end
-
---Pistonware
