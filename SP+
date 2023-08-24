@@ -13550,3 +13550,925 @@ txt.OnIncomingMessage = function(msg)
 
 	return p
 end
+
+--Pistonware
+runFunction(function()
+		local InvisNoCollide = {Enabled = false}
+		local partslist = {}
+	
+		local InvisAnims = {
+			--HANNAH_JUMP_DOWN = "rbxassetid://10725339583", -- HANNAH_JUMP_DOWN [PATCHED]
+			CLETUS_BOSS_SPAWN = "rbxassetid://11198021943", -- CLETUS_BOSS_SPAWN
+			SKELETON_SPAWN = "rbxassetid://11330409797", -- SKELETON_SPAWN
+			HALLOWEEN_BOSS_SPAWN = "rbxassetid://11335949902",  -- HALLOWEEN_BOSS_SPAWN
+		}
+	
+		local animsinvis = {}
+		for i,v in next, InvisAnims do
+			animsinvis[#animsinvis+1] = i
+		end
+	
+		local InvisMethod = {Value = "HALLOWEEN_BOSS_SPAWN"}
+		local newSize = 3
+	
+		local function setCollisions(character, state)
+			if state then
+				RunLoops:UnbindFromStepped("InvisPhase")
+				if entityLibrary.isAlive then
+					for i, v in next, partslist do
+						v.CanCollide = true
+						v.CanTouch = true
+					end
+					table.clear(partslist)
+					character.HumanoidRootPart.Size = Vector3.new(1.9, 2, 1)
+					character.Humanoid.CameraOffset = Vector3.new(0, 0, 0)
+				end
+			else
+				RunLoops:BindToStepped("InvisPhase", function()
+					for _, part in next, character:GetDescendants() do
+						if part:IsA("BasePart") and part ~= character.PrimaryPart and part.CanCollide then
+							part.CanCollide = false
+							part.CanTouch = false
+							table.insert(partslist, part)
+						end
+					end
+					character.Humanoid.CameraOffset = Vector3.new(0, newSize / -2, 0)
+				end)
+				character.HumanoidRootPart.Size = Vector3.new(2, newSize, 1.1)
+			end
+		end
+	
+		local function invisibility(char)
+			if not entityLibrary.isAlive then return nil end
+			local animator = char.Humanoid:WaitForChild("Animator", 5)
+			local function playAnim(id)
+				local anim = Instance.new("Animation", char)
+				anim.AnimationId = id
+				return animator:LoadAnimation(anim)
+			end
+			local anim = playAnim(InvisAnims[InvisMethod.Value])
+			anim.Priority = Enum.AnimationPriority.Action4
+			setCollisions(lplr.Character, false)
+			repeat
+				if not anim.IsPlaying then
+					anim:Play(1 / 999999, 999999, 1 / 999999)
+				end
+				task.wait(1)
+			until not Invis.Enabled or not entityLibrary.isAlive
+			if anim then
+				anim.Looped = false
+				anim:AdjustSpeed(9999)
+				local c
+				c = anim.Ended:Connect(function()
+					c:Disconnect()
+					anim:Destroy()
+				end)
+			end
+			if lplr.Character then
+				setCollisions(lplr.Character, true)
+			end
+		end
+		Invis = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+			Name = "Invis",
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						repeat task.wait() until bedwarsStore.matchState ~= 0
+						local oldchar
+						table.insert(Invis.Connections, lplr.CharacterAdded:Connect(function(char)
+							task.wait(1)
+							char:WaitForChild("Humanoid", 5):WaitForChild("Animator", 5)
+							invisibility(char)
+						end))
+						if lplr.Character then
+							task.wait(1)
+							lplr.Character:WaitForChild("Humanoid", 5):WaitForChild("Animator", 5)
+							invisibility(lplr.Character)
+						end
+					end)
+				end
+			end
+		})
+		InvisMethod = Invis.CreateDropdown({
+			Name = "Method",
+			List = animsinvis,
+			Function = blankFunction,
+			Default = "HALLOWEEN_BOSS_SPAWN"
+		})
+	end)
+runFunction(function()
+		local FpsBoostPlus = {Enabled = false}
+		
+		local FpsBoostSelf = {Enabled = false}
+		local FpsBoostModel = {Enabled = false}
+		local FpsBoostImages = {Enabled = false}
+		local FpsBoostBlocks = {Enabled = false}
+		local FpsBoostAccessories = {Enabled = false}
+		local FpsBoostLighting = {Enabled = false}
+		local FpsBoostConnection = {Enabled = false}
+		local FpsBoostBeta = {Enabled = false}
+	
+		local Map = workspace:FindFirstChild("Map")
+	
+		local settingsCache
+	
+		local function getSettings()
+			if settingsCache == nil then
+				settingsCache = typeof(settings) == "Instance" and settings or typeof(settings) == "function" and settings()
+			end
+			return settingsCache or {}
+		end
+	
+		local function checkWhitelisted(instance, check)
+			if check == "Character" then
+				local localcheck = (lplr.Character == nil or (lplr.Character and not instance:IsDescendantOf(lplr.Character))) or FpsBoostSelf.Enabled
+				local modelcheck = instance:FindFirstAncestorWhichIsA("Model") or FpsBoostModel.Enabled
+				return localcheck and modelcheck and true or false
+			elseif check == "Images" then
+				return (instance:IsA("ImageLabel") or instance:IsA("ImageButton")) and FpsBoostImages.Enabled
+			elseif check == "Block" then
+				local blockcheck = Map == nil or not instance:IsDescendantOf(Map) or FpsBoostBlocks.Enabled
+				return blockcheck
+			elseif check == "Clothing" then
+				return instance:IsA("Clothing") and FpsBoostAccessories.Enabled
+			elseif check == "Lighting" then
+				return FpsBoostLighting.Enabled
+			elseif check == "Connection" then
+				return FpsBoostConnection.Enabled
+			end
+		end
+	
+		local part_operations = 0
+	
+		local textures = {}
+	
+		local function cleantexture(obj)
+			if checkWhitelisted(obj, "Block") then
+				runService.PostSimulation:Wait()
+				table.insert(textures, { Object = obj, Material = obj.Material })
+				obj.Material = Enum.Material.SmoothPlastic
+				part_operations += 1
+				for i2,v2 in next, (obj:GetChildren()) do
+					if v2:IsA("Texture") then
+						table.insert(textures, { Object = v2, Texture = v2.Texture, Material = obj.Material })
+						v2.Texture = "rbxassetid://0"
+						v2.Transparency = 1
+						part_operations += 2
+					end
+				end
+			end
+		end
+	
+		local blockconnection
+	
+		local function textureschange(callback)
+			if callback then
+				if blockconnection then
+					blockconnection:Disconnect()
+				end
+				if checkWhitelisted(nil, "Connection") then
+					blockconnection = collectionService:GetInstanceAddedSignal("block"):Connect(cleantexture, obj)
+				end
+				for i, block in next, (collectionService:GetTagged("block")) do
+					task.spawn(cleantexture, block)
+				end
+			else
+				if blockconnection then
+					blockconnection:Disconnect()
+				end
+				for i, v in next, (textures) do
+					if v.Object and v.Texture then
+						v.Object.Texture = v.Texture or "rbxassetid://0"
+						v.Object.Transparency = 0
+					end
+					if v.Object and v.Material then
+						pcall(function()
+							v.Object.Material = v.Material
+						end)
+					end
+					textures[i] = nil
+				end
+			end
+		end
+		local bad_instances = 0
+		local mesh_instances = 0
+	
+		local CanBeEnabled = {"ParticleEmitter", "Trail", "Smoke", "Fire", "Sparkles", "PostEffect", "SpotLight"}
+		local function filterinstance(instance)
+			if checkWhitelisted(instance, "Character") then
+				if instance:IsA("Model") then
+					instance.LevelOfDetail = Enum.ModelLevelOfDetail.Disabled
+					instance.ModelStreamingMode = Enum.ModelStreamingMode.Nonatomic
+					part_operations += 2
+				end
+				if instance:IsA("FaceInstance") then
+					if checkWhitelisted(instance, "Block") then
+						instance.Transparency = 1
+						instance.Shiny = 0
+						part_operations += 2
+					end
+				end
+				if table.find(CanBeEnabled, instance.ClassName) then
+					instance.Enabled = false
+					part_operations += 1
+				end
+				if instance:IsA("Explosion") then
+					instance.BlastPressure = 1
+					instance.BlastRadius = 1
+					instance.Visible = false
+					part_operations += 3
+				end
+				if checkWhitelisted(instance, "Images") then
+					instance.Image = "rbxassetid://0"
+					part_operations += 1
+				end
+				if checkWhitelisted(instance, "Clothing") then
+					task.delay(0.01, function()
+						instance.Parent = nil
+						part_operations += 1
+					end)
+				end
+				if instance:IsA("BasePart") or instance:IsA("Part") or instance:IsA("Union") or instance:IsA("CornerWedgePart") or instance:IsA("TrussPart") then
+					if checkWhitelisted(instance, "Block") then
+						instance.Material = Enum.Material.SmoothPlastic
+						part_operations += 1
+					end
+					--instance.Reflectance = 0
+					part_operations += 1
+					if FpsBoostBeta.Enabled then
+						if instance:IsA("BasePart") then
+							instance.CastShadow = false
+							if (lplr.Character == nil or (lplr.Character and not instance:IsDescendantOf(lplr.Character))) and not instance.Parent:IsA("Model") then
+								sethiddenproperty(instance, "NetworkIsSleeping", true)
+							end
+							part_operations += 1
+						end
+						if instance:IsA("MeshPart") or instance:IsA("Union") then
+							if instance.RenderFidelity == Enum.RenderFidelity.Precise then
+								bad_instances += 1
+							end
+							mesh_instances += 1
+							instance.DoubleSided = false
+							--instance.RenderFidelity = Enum.RenderFidelity.Performance
+							--instance.CollisionFidelity = Enum.CollisionFidelity.Box
+							part_operations += 1
+						end
+					end
+				end
+				if instance:IsA("ParticleEmitter") or instance:IsA("Trail") then
+					instance.Lifetime = NumberRange.new(0)
+					part_operations += 1
+				end
+			end
+		end
+	
+		local disable = {
+			"dodo_bird",
+			"mount_sitting",
+			"carrot_cannon",
+			"paint_shotgun",
+			"guided_projectile",
+			"lightning_beams",
+			"bee_wander",
+			"mass_hammer",
+			"yeti_kit",
+			"player_vacuum",
+			"mage_status_effect",
+			"stopwatch_controller",
+			"life_steal",
+			"decay_controller",
+			"gun_game",
+			"flag_capture",
+			"flagman_controller",
+			"launch_pad",
+			"survival_controller",
+			"drone_controller",
+		}
+	
+		local function checkblocked(str)
+			str = str:gsub("-", "_")
+			for i, v in next, (disable) do
+				if str:find(v) then
+					return true
+				end
+			end
+			return nil
+		end
+	
+		local runserverconnections = {
+			Heartbeat = {},
+			Stepped = {},
+			PreSimulation = {},
+			PostSimulation = {},
+			PreAnimation = {},
+			PreRender = {},
+			RenderStepped = {},
+		}
+
+		local whitelistedblocks = {
+			bed = true,
+		}
+
+		local cachedBlockPositions = {}
+
+		local cachedNormalSides2 = Enum.NormalId:GetEnumItems()
+		local function isBlockCovered2(pos)
+			local coveredsides = 0
+			for i, v in next, (cachedNormalSides2) do
+				local blockpos = (pos + (Vector3.FromNormalId(v) * 3))
+				if getPlacedBlock(blockpos) then
+					coveredsides = coveredsides + 1
+				end
+			end
+			return coveredsides == #cachedNormalSides2
+		end
+
+		local function purgeBlocks(block)
+			if block:GetAttribute("PlacedByUserId") == 0 and whitelistedblocks[block.Name] == nil then
+				if isBlockCovered2(bedwars.BlockController:getBlockPosition(block.Position) * 3) then
+					collectionService:RemoveTag(block, "block")
+					block:Destroy()
+				end
+			end
+		end
+	
+		FpsBoostPlus = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+			Name = "FpsBoostPlus",
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						repeat task.wait() until shared.VapeFullyLoaded
+						Map = workspace:WaitForChild("Map", 9e9)
+						task.spawn(textureschange, true)
+						table.clear(cachedBlockPositions)
+	
+						local WaitNumber = 5000
+						for i, v in next, (workspace:GetDescendants()) do
+							pcall(filterinstance, v)
+							WaitNumber += 1
+							if i == WaitNumber then
+								task.wait()
+								WaitNumber = 0
+							end
+						end
+						if checkWhitelisted(nil, "Connection") then
+							workspace.DescendantAdded:Connect(filterinstance)
+						end
+						local terrian = workspace:FindFirstChildOfClass("Terrain")
+						if terrain then
+							terrain.WaterWaveSize = 0
+							terrain.WaterWaveSpeed = 0
+							terrain.WaterReflectance = 0
+							terrain.WaterTransparency = 0
+							sethiddenproperty(terrain, "Decoration", false)
+							part_operations += 5
+						end
+						if checkWhitelisted(nil, "Lighting") then
+							sethiddenproperty(lightingService, "Technology", 2)
+							lightingService.GlobalShadows = false
+							lightingService.FogEnd = 9e9
+							part_operations += 3
+						end
+						if FpsBoostBeta.Enabled then
+							workspace:SetMeshPartHeadsAndAccessories(Enum.MeshPartHeadsAndAccessories.Disabled)
+							getSettings().Physics.AllowSleep = true
+							getSettings().Physics.UseCSGv2 = true
+							getSettings().Physics.PhysicsEnvironmentalThrottle = Enum.EnviromentalPhysicsThrottle.Skip4
+							getSettings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level04
+							getSettings().Rendering.ViewMode = Enum.ViewMode.GeometryComplexity
+							--getSettings().Rendering.MeshCacheSize = 1
+							getSettings().Rendering.ExportMergeByMaterial = true
+							getSettings().Rendering.EagerBulkExecution = false
+							part_operations += 10
+						end
+
+						if FpsBoostBeta.Enabled then
+							if FpsBoostBlocks.Enabled then
+								for i, block in next, (collectionService:GetTagged("block")) do -- this will destroy blocks which are not visible or needed for you
+									task.spawn(purgeBlocks, block)
+									if i % 100 == 0 then
+										task.wait()
+									end
+								end
+							end
+						end
+	
+						if FpsBoostBeta.Enabled then
+							for id, _ in next, (runserverconnections) do
+								for __, connect in next, (getconnections(runService[id])) do
+									if connect.Function then
+										local src = debug.getinfo(connect.Function).source
+										if checkblocked(src) then
+											runserverconnections[id][#runserverconnections[id] + 1] = src
+											connect:Disable()
+											part_operations += 1
+										end
+									end
+								end
+							end
+						end
+					end)
+				else
+					task.spawn(textureschange, false)
+				end
+			end
+		})
+	
+		FpsBoostSelf = FpsBoostPlus.CreateToggle({
+			Name = "Self",
+			HoverText = "Filter your own character (requires Models to be enabled)",
+			Function = blankFunction
+		})
+	
+		FpsBoostModel = FpsBoostPlus.CreateToggle({
+			Name = "Model",
+			HoverText = "Filter models and their descendants",
+			Function = blankFunction
+		})
+	
+		FpsBoostImages = FpsBoostPlus.CreateToggle({
+			Name = "Images",
+			HoverText = "Filter images and decals",
+			Function = blankFunction
+		})
+		
+		FpsBoostBlocks = FpsBoostPlus.CreateToggle({
+			Name = "Blocks",
+			HoverText = "Filter bedwars blocks",
+			Function = blankFunction
+		})
+	
+		FpsBoostAccessories = FpsBoostPlus.CreateToggle({
+			Name = "Accessories",
+			HoverText = "Filter accessories",
+			Function = blankFunction
+		})
+	
+		FpsBoostLighting = FpsBoostPlus.CreateToggle({
+			Name = "Lighting",
+			HoverText = "Filter the lighting environment",
+			Function = blankFunction
+		})
+	
+		FpsBoostConnection = FpsBoostPlus.CreateToggle({
+			Name = "Connection",
+			HoverText = "Filter all descendants added to the workspace",
+			Function = blankFunction
+		})
+	
+		FpsBoostBeta = FpsBoostPlus.CreateToggle({
+			Name = "Beta",
+			HoverText = "Apply unstable settings",
+			Function = blankFunction
+		})
+	end)
+runFunction(function()
+		local PingBypass = {Enabled = false}
+		local PingBypassShowRoot = {Enabled = false}
+	
+		local BypassNumbers = {
+			Speed = 1000,
+			Lerp = 0.3,
+			Frequency = 0.33,
+			TPLowest = 0.05,
+			TPPrecise = 20,
+			TPRecheck = 20,
+			SlowdownDistance = 300,
+			Slowdown = 0.7,
+		}
+	
+		local clonesuccess = false
+		local disabledproper = true
+		local cloned
+		local clone
+		local hip
+	
+		local function disablefunc()
+			disabledproper = true
+			if not shared.pingbypassroot or not shared.pingbypassroot.Parent then return end
+			lplr.Character.Parent = game
+			entityLibrary.character.HumanoidRootPart:Destroy()
+			entityLibrary.character.HumanoidRootPart = shared.pingbypassroot
+			shared.pingbypassroot.Parent = lplr.Character
+			shared.pingbypassroot.Transparency = 1
+			lplr.Character.PrimaryPart = shared.pingbypassroot
+			lplr.Character.PrimaryPart.Transparency = 1
+			lplr.Character.Parent = workspace
+			shared.pingbypassroot.CanCollide = true
+			for i,v in next, (lplr.Character:GetDescendants()) do 
+				if v:IsA("Weld") or v:IsA("Motor6D") then 
+					if v.Part0 == clone then v.Part0 = shared.pingbypassroot end
+					if v.Part1 == clone then v.Part1 = shared.pingbypassroot end
+				end
+				if v:IsA("BodyVelocity") then 
+					v:Destroy()
+				end
+			end
+			for i,v in next, (shared.pingbypassroot:GetChildren()) do 
+				if v:IsA("BodyVelocity") then 
+					v:Destroy()
+				end
+			end
+			local oldclonepos = clone.Position.Y
+			if clone then 
+				clone:Destroy()
+				clone = nil
+			end
+			lplr.Character.Humanoid.HipHeight = hip or 2
+			local origcf = {shared.pingbypassroot.CFrame:GetComponents()}
+			origcf[2] = oldclonepos
+			shared.pingbypassroot.CFrame = CFrame.new(unpack(origcf))
+			shared.pingbypassroot = nil
+		end
+	
+		table.insert(vapeConnections, lplr:GetAttributeChangedSignal("LastTeleported"):Connect(function()
+			if shared.pingbypassroot and cloned == lplr.Character and clone and math.abs(lplr:GetAttribute("SpawnTime") - lplr:GetAttribute("LastTeleported")) > 3 then
+				clone.CFrame = shared.pingbypassroot.CFrame
+			end
+		end))
+	
+		table.insert(vapeConnections, vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
+			if PingBypass.Enabled and deathTable.entityInstance == lplr.Character and not deathTable.finalKill then
+				PingBypass.ToggleButton(false)
+			    repeat task.wait(0.03) until entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart)
+				task.wait(0.7)
+                if not PingBypass.Enabled then
+			        PingBypass.ToggleButton(false)
+				end
+			end
+		end))
+	
+		local oldseattab = Instance.new("BindableEvent")
+	
+		local function check()
+			if clone and shared.pingbypassroot and (shared.pingbypassroot.Position - clone.Position).magnitude >= (BypassNumbers.TPRecheck + getSpeed()) and canpingbypass then
+				clone.CFrame = shared.pingbypassroot.CFrame
+			end
+		end
+	
+		local oldEntityNearPosition
+		local oldAllNearPosition
+		
+		local bodyvelo
+		local teleportDistance = 0
+	
+		local function teleportTo(cframe)
+			local mag = (clone.CFrame.p - cframe.p).magnitude
+			shared.pingbypassroot.CFrame = cframe
+			teleportDistance += mag
+		end
+	
+		local fpslist = {}
+		local function getaverageframerate()
+			local frames = 0
+			for i,v in next, (fpslist) do 
+				frames = frames + v
+			end
+			return #fpslist > 0 and (frames / (60 * #fpslist)) <= 1.2 or #fpslist <= 0
+		end
+
+		local listenerCreated = false
+		local attemptedBypass
+	
+		PingBypass = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+			Name = "PingBypass",
+			HoverText = "Bedwars 2021 anticheat",
+			Function = function(callback)
+				if callback then
+					if not entityLibrary.isAlive then 
+						disabledproper = true
+					end
+					if not disabledproper then 
+						warningNotification("PingBypass", "Wait until PingBypass finishes", 3)
+						PingBypass.ToggleButton(false)
+						return
+					end
+					clonesuccess = false
+					if not listenerCreated then
+						listenerCreated = true
+						task.delay(0.03, function()
+							repeat
+								if clonesuccess then break end
+								if PingBypass.Enabled then
+									PingBypass.ToggleButton(false)
+								end
+								repeat task.wait(0.03) until entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart)
+								task.wait(attemptedBypass and attemptedBypass == lplr.Character and 0 or 0.7)
+								if not PingBypass.Enabled then
+									PingBypass.ToggleButton(false)
+								end
+							until clonesuccess
+							listenerCreated = false
+						end)
+					end
+					attemptedBypass = lplr.Character
+					if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then
+						cloned = lplr.Character
+						shared.pingbypassroot = entityLibrary.character.HumanoidRootPart
+						if not lplr.Character.Parent then
+							PingBypass.ToggleButton(false)
+							return
+						end
+						lplr.Character.Parent = game
+						clone = shared.pingbypassroot:Clone()
+						clone.Parent = lplr.Character
+						shared.pingbypassroot.Parent = gameCamera
+						bedwars.QueryUtil:setQueryIgnored(shared.pingbypassroot, true)
+						if PingBypassShowRoot.Enabled then
+							shared.pingbypassroot.Transparency = 0.7
+							shared.pingbypassroot.Color = Color3.new(0.4, 1, 0.4)
+						end
+						clone.CFrame = shared.pingbypassroot.CFrame
+						lplr.Character.PrimaryPart = clone
+						lplr.Character.Parent = workspace
+						for i,v in next, (lplr.Character:GetDescendants()) do 
+							if v:IsA("Weld") or v:IsA("Motor6D") then 
+								if v.Part0 == shared.pingbypassroot then v.Part0 = clone end
+								if v.Part1 == shared.pingbypassroot then v.Part1 = clone end
+							end
+							if v:IsA("BodyVelocity") then 
+								v:Destroy()
+							end
+						end
+						for i,v in next, (shared.pingbypassroot:GetChildren()) do 
+							if v:IsA("BodyVelocity") then 
+								v:Destroy()
+							end
+						end
+						bodyvelo = Instance.new("BodyVelocity")
+						bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
+						bodyvelo.Velocity = Vector3.zero
+						bodyvelo.Parent = shared.pingbypassroot
+						lplr.Character.Humanoid.HipHeight = hip or 2
+						hip = lplr.Character.Humanoid.HipHeight
+						entityLibrary.character.HumanoidRootPart = clone
+						clonesuccess = true
+					end
+					if not clonesuccess then 
+						warningNotification("PingBypass", "Character missing", 3)
+						PingBypass.ToggleButton(false)
+						return
+					end
+					oldEntityNearPosition = EntityNearPosition
+					EntityNearPosition = function(distance, ignore, overridepos)
+						overridepos = overridepos or shared.pingbypassroot and shared.pingbypassroot.Position
+						return oldEntityNearPosition(distance, ignore, overridepos)
+					end
+					oldAllNearPosition = AllNearPosition
+					AllNearPosition = function(distance, amount, sortfunction, prediction, overridepos)
+						overridepos = overridepos or shared.pingbypassroot and shared.pingbypassroot.Position
+						return oldAllNearPosition(distance, amount, sortfunction, prediction, overridepos)
+					end
+					task.spawn(function()
+						table.clear(fpslist)
+						repeat
+							if not PingBypass.Enabled then break end
+							local fps = math.floor(1 / runService.Heartbeat:Wait())
+							if #fpslist >= 10 then 
+								table.remove(fpslist, 1)
+							end
+							table.insert(fpslist, fps)
+							task.wait(1)
+						until not PingBypass.Enabled
+					end)
+					RunLoops:BindToHeartbeat("PingBypass", function()
+						local root = entityLibrary.isAlive and entityLibrary.character.HumanoidRootPart
+						if isnetworkowner(shared.pingbypassroot) and root then
+							local sit = entityLibrary.character.Humanoid.Sit
+							if sit ~= oldseat then 
+								if sit then 
+									for i,v in next, (workspace:GetDescendants()) do 
+										if not v:IsA("Seat") then continue end
+										local weld = v:FindFirstChild("SeatWeld")
+										if weld and weld.Part1 == shared.pingbypassroot then 
+											weld.Part1 = clone
+											pcall(function()
+												for i,v in next, (getconnections(v:GetPropertyChangedSignal("Occupant"))) do
+													local newfunc = debug.getupvalue(debug.getupvalue(v.Function, 1), 3) 
+													debug.setupvalue(newfunc, 4, {
+														GetPropertyChangedSignal = function(self, prop)
+															return oldseattab.Event
+														end
+													})
+													newfunc()
+												end
+											end)
+										end
+									end
+								else
+									oldseattab:Fire(false)
+								end
+								oldseat = sit	
+							end
+							if not canpingbypass then
+								if bodyvelo then
+									bodyvelo:Destroy()
+									bodyvelo = nil
+								end
+								return
+							else
+								if bodyvelo == nil then
+									bodyvelo = Instance.new("BodyVelocity")
+									bodyvelo.MaxForce = Vector3.new(0, 9e9, 0)
+									bodyvelo.Velocity = Vector3.zero
+									bodyvelo.Parent = shared.pingbypassroot
+								end
+							end
+							local targetvelo = root.AssemblyLinearVelocity
+							local speed = (sit or bedwars.HangGliderController.hangGliderActive) and targetvelo.Magnitude or (23 + getSpeed())
+							targetvelo = (targetvelo.Unit == targetvelo.Unit and targetvelo.Unit or Vector3.zero) * 20
+							bodyvelo.Velocity = Vector3.new(0, math.abs(root.Velocity.Y) <= 0.01 and 0 or root.Velocity.Y, 0)
+							if root.Velocity.Magnitude <= 0.01 then
+								shared.pingbypassroot.Velocity = Vector3.zero
+							else
+								shared.pingbypassroot.Velocity = Vector3.new(math.clamp(targetvelo.X, -speed, speed), root.Velocity.Y, math.clamp(targetvelo.Z, -speed, speed))
+							end
+							_VapeApi.NoMove = nil
+						else
+							_VapeApi.NoMove = true
+							root.Velocity = Vector3.zero
+							root.AssemblyLinearVelocity = Vector3.zero
+							root.AssemblyAngularVelocity = Vector3.zero
+							shared.pingbypassroot.Velocity = Vector3.zero
+							shared.pingbypassroot.AssemblyLinearVelocity = Vector3.zero
+						end
+						shared.pingbypassroot.AssemblyAngularVelocity = Vector3.zero
+					end)
+					task.spawn(function()
+						repeat
+							task.wait()
+							if entityLibrary.isAlive then
+								if isnetworkowner(shared.pingbypassroot) then
+									if not entityLibrary.character.Humanoid.Sit then
+										if not canpingbypass then
+											continue
+										end
+										if _VapeApi.NoFlag then
+											_VapeApi.NoFlag = nil
+											clone.CFrame = shared.pingbypassroot.CFrame
+											continue
+										end
+										if NewDisablerSlowdown.Enabled and (bedwarsStore.attackReachUpdate > tick()) then
+											shared.pingbypassroot.CFrame = clone.CFrame
+											continue
+										end
+										if (cloned.Humanoid.FloorMaterial ~= Enum.Material.Air or bedwarsStore.disabledFloat) and (teleportDistance >= BypassNumbers.SlowdownDistance) then
+											teleportDistance = 0
+											_VapeApi.NoMove = true
+											warningNotification("PingBypass", "slowdown", BypassNumbers.Slowdown)
+											task.delay(BypassNumbers.Slowdown, function()
+												_VapeApi.NoMove = nil
+											end)
+										end
+										local frameratecheck = getaverageframerate()
+										local framerate = BypassNumbers.Frequency <= 0.3 and frameratecheck and -0.22 or 0
+										local framerate2 = BypassNumbers.Frequency <= 0.3 and frameratecheck and -0.01 or 0
+										framerate = math.floor((BypassNumbers.Lerp + framerate) * 100) / 100
+										framerate2 = math.floor((BypassNumbers.Frequency + framerate2) * 100) / 100
+										local needsfix = false
+										for i = 1, 2 do
+											check()
+											task.wait(i % 2 == 0 and 0.01 or 0.02)
+											check()
+											if shared.pingbypassroot then
+												if (shared.pingbypassroot.CFrame.p - clone.CFrame.p).magnitude >= BypassNumbers.TPLowest then
+													local offsety = entityLibrary.character.HumanoidRootPart.Position.Y - shared.pingbypassroot.Position.Y
+													if math.abs(offsety) <= 1 then
+														local newcf = shared.pingbypassroot.CFrame:lerp(clone.CFrame + Vector3.new(0, offsety, 0), framerate)
+														if not getPlacedBlock(newcf.p) then
+															teleportTo(newcf)
+														else
+															needsfix = true
+														end
+													else
+														local newcf = shared.pingbypassroot.CFrame:lerp(clone.CFrame, framerate)
+														if not getPlacedBlock(newcf.p) then
+															teleportTo(newcf)
+														else
+															needsfix = true
+														end
+													end
+												end
+											end
+										end
+										check()
+										task.wait(framerate2)
+										check()
+										if shared.pingbypassroot then
+											local mag = (shared.pingbypassroot.CFrame.p - clone.CFrame.p).magnitude
+											if mag >= BypassNumbers.TPLowest and (mag <= BypassNumbers.TPPrecise or needsfix) then
+												local offsety = entityLibrary.character.HumanoidRootPart.Position.Y - shared.pingbypassroot.Position.Y
+												if math.abs(offsety) <= 1 then
+													teleportTo(clone.CFrame + Vector3.new(0, offsety, 0))
+												else
+													teleportTo(clone.CFrame)
+												end
+											end
+										end
+									else
+										clone.CFrame = shared.pingbypassroot.CFrame
+									end
+								else
+									clone.CFrame = shared.pingbypassroot.CFrame
+									teleportDistance = 0
+								end
+							end
+						until not PingBypass.Enabled
+					end)
+				else
+					RunLoops:UnbindFromHeartbeat("PingBypass")
+					if clonesuccess and shared.pingbypassroot and clone and lplr.Character.Parent == workspace and shared.pingbypassroot.Parent ~= nil and disabledproper and cloned == lplr.Character then 
+						local origcf = {clone.CFrame:GetComponents()}
+						origcf[1] = shared.pingbypassroot.Position.X
+						origcf[2] = shared.pingbypassroot.Position.Y
+						origcf[3] = shared.pingbypassroot.Position.Z
+						shared.pingbypassroot.CFrame = CFrame.new(unpack(origcf))
+						entityLibrary.character.Humanoid:ChangeState(Enum.HumanoidStateType.Landed)
+						disabledproper = false
+						disablefunc()
+					end
+					if oldEntityNearPosition then
+						EntityNearPosition = oldEntityNearPosition
+					end
+					if oldAllNearPosition then
+						AllNearPosition = oldAllNearPosition
+					end
+				end
+			end
+		})
+		--[=[PingBypass.CreateSlider({
+			Name = "Speed",
+			Min = 0,
+			Max = 1400,
+			Default = BypassNumbers.Speed,
+			Function = function(val) BypassNumbers.Speed = val end
+		})]=]
+		PingBypass.CreateSlider({
+			Name = "Lerp",
+			Min = 0,
+			Max = 100,
+			Default = BypassNumbers.Lerp * 100,
+			Double = 100,
+			Function = function(val) BypassNumbers.Lerp = val / 100 end
+		})
+		PingBypass.CreateSlider({
+			Name = "Frequency",
+			Min = 0,
+			Max = 100,
+			Default = BypassNumbers.Frequency * 100,
+			Double = 100,
+			Function = function(val) BypassNumbers.Frequency = val / 100 end
+		})
+		PingBypass.CreateSlider({
+			Name = "Lowest Distance",
+			Min = 0.05,
+			Max = 23,
+			Default = BypassNumbers.TPLowest,
+			Function = function(val) BypassNumbers.TPLowest = val end
+		})
+		PingBypass.CreateSlider({
+			Name = "Precision",
+			Min = 0.05,
+			Max = 23,
+			Default = BypassNumbers.TPPrecise,
+			Function = function(val) BypassNumbers.TPPrecise = val end
+		})
+		PingBypass.CreateSlider({
+			Name = "Recheck",
+			Min = 0,
+			Max = 23,
+			Default = BypassNumbers.TPRecheck,
+			Function = function(val) BypassNumbers.TPRecheck = val end
+		})
+		PingBypass.CreateSlider({
+			Name = "Slowdown Distance",
+			Min = 300,
+			Max = 600,
+			Default = BypassNumbers.SlowdownDistance,
+			Function = function(val) BypassNumbers.SlowdownDistance = val end
+		})
+		PingBypass.CreateSlider({
+			Name = "Slowdown",
+			Min = 0,
+			Max = 200,
+			Default = BypassNumbers.Slowdown * 100,
+			Double = 100,
+			Function = function(val) BypassNumbers.Slowdown = val / 100 end
+		})
+		PingBypassShowRoot = PingBypass.CreateToggle({
+			Name = "Show Root",
+			Function = function(callback)
+				if callback then
+					if shared.pingbypassroot then
+						shared.pingbypassroot.Transparency = 0.7
+						shared.pingbypassroot.Color = Color3.new(0.4, 1, 0.4)
+					end
+				else
+					if shared.pingbypassroot then
+						shared.pingbypassroot.Transparency = 1
+					end
+				end
+			end,
+			Default = true
+		})
+	end)
