@@ -6173,8 +6173,8 @@ end)
 
 runFunction(function()
 	local SBloaded = false
-	local SB = {Enabled = false}
-	SB = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	local SBLoader = {Enabled = false}
+	SBLoader = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 		Name = "Slap Battles",
 		Function = function(callback)
 			if callback then
@@ -6182,7 +6182,7 @@ runFunction(function()
 					loadstring(game:HttpGet(("https://raw.githubusercontent.com/ionlyusegithubformcmods/1-Line-Scripts/main/Slap%20Battles")))()
 					SBloaded = true
 				end
-				SB.ToggleButton(false)
+				SBLoader.ToggleButton(false)
 			end
 		end
 	})
