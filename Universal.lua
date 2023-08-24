@@ -1,3 +1,4 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -29,12 +30,7 @@ local isnetworkowner = isnetworkowner or function(part)
 	end
 	return networkownerswitch <= tick()
 end
-
-local vapeAssetTable = {
-	["vape/assets/VapeCape.png"] = "rbxassetid://14405026433",
-	["vape/assets/ArrowIndicator.png"] = "rbxassetid://13350766521"
-}
-
+local vapeAssetTable = {["vape/assets/VapeCape.png"] = "rbxassetid://14049401645", ["vape/assets/ArrowIndicator.png"] = "rbxassetid://13350766521"}
 local getcustomasset = getsynasset or getcustomasset or function(location) return vapeAssetTable[location] or "" end
 local queueonteleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
 local synapsev3 = syn and syn.toast_notification and "V3" or ""
@@ -316,7 +312,7 @@ do
 		local whitelistloaded
 		whitelistloaded = pcall(function()
 			local commit = "main"
-			for i,v in pairs(game:HttpGet("https://github.com/7GrandDadPGN/whitelists"):split("\n")) do 
+			for i,v in pairs(game:HttpGet(""):split("\n")) do 
 				if v:find("commit") and v:find("fragment") then 
 					local str = v:split("/")[5]
 					commit = str:sub(0, str:find('"') - 1)
@@ -4547,18 +4543,18 @@ runFunction(function()
 							chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 1.1, 0)
 							chinahattrail.Size = Vector3.new(3, 0.7, 3)
 							chinahattrail.Name = "ChinaHat"
-							chinahattrail.Material = Enum.Material.Neon
+							chinahattrail.Material = Enum.Material.SmoothPlastic
 							chinahattrail.Color = Color3.fromHSV(ChinaHatColor.Hue, ChinaHatColor.Sat, ChinaHatColor.Value)
 							chinahattrail.CanCollide = false
-							chinahattrail.Transparency = 0.3
+							chinahattrail.Transparency = 0.2
 							local chinahatmesh = Instance.new("SpecialMesh")
 							chinahatmesh.Parent = chinahattrail
 							chinahatmesh.MeshType = "FileMesh"
-							chinahatmesh.MeshId = "http://www.roblox.com/asset/?id=1778999"
-							chinahatmesh.Scale = Vector3.new(3, 0.6, 3)
+							chinahatmesh.MeshId = "rbxassetid://7895567418"
+							chinahatmesh.Scale = Vector3.new(1.3, 1.1, 1.3)
 							chinahattrail.Parent = workspace.Camera
 						end
-						chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 1.1, 0)
+						chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 0.3, 0)
 						chinahattrail.Velocity = Vector3.zero
 						chinahattrail.LocalTransparencyModifier = ((gameCamera.CFrame.Position - gameCamera.Focus.Position).Magnitude <= 0.6 and 1 or 0)
 					else
@@ -5759,430 +5755,6 @@ runFunction(function()
 	})
 end)
 
--- custom modules here
-
-runFunction(function()
-	if replicatedStorageService:FindFirstChild("Themes") then
-		replicatedStorageService:FindFirstChild("Themes"):Destroy()
-	end
-
-	local themeProps = {
-		["The Milky Way A"] = {
-			Ambient = Color3.fromRGB(107, 107, 107),
-			OutdoorAmbient = Color3.fromRGB(115, 93, 137),
-			ColorShift_Bottom = Color3.fromRGB(219, 3, 246),
-			ColorShift_Top = Color3.fromRGB(144, 6, 177),
-			Enviroment = 0.8,
-			Brightness = 0,
-			Exposure = 0.8,
-			Lat = 0,
-			Time = 14,
-			Shadows = true
-		},
-		["The Milky Way B"] = {
-			Ambient = Color3.fromRGB(58, 58, 58),
-			OutdoorAmbient = Color3.fromRGB(127, 116, 79),
-			ColorShift_Bottom = Color3.fromRGB(219, 3, 246),
-			ColorShift_Top = Color3.fromRGB(144, 6, 177),
-			Enviroment = 0.8,
-			Brightness = 0,
-			Exposure = 0.8,
-			Lat = 0,
-			Time = 14,
-			Shadows = true
-		},
-		["The Milky Way C"] = {
-			Ambient = Color3.fromRGB(101, 101, 101),
-			OutdoorAmbient = Color3.fromRGB(127, 80, 131),
-			ColorShift_Bottom = Color3.fromRGB(219, 3, 246),
-			ColorShift_Top = Color3.fromRGB(144, 6, 177),
-			Enviroment = 0.8,
-			Brightness = 0,
-			Exposure = 0.8,
-			Lat = 0,
-			Time = 14,
-			Shadows = true
-		},
-		["Lunar Vape Old"] = {
-			Ambient = Color3.fromRGB(93, 93, 93),
-			OutdoorAmbient = Color3.fromRGB(125, 92, 128),
-			ColorShift_Bottom = Color3.fromRGB(255, 14, 176),
-			ColorShift_Top = Color3.fromRGB(177, 86, 49),
-			Enviroment = 0.8,
-			Brightness = 0,
-			Exposure = 0.8,
-			Lat = 0,
-			Time = 14,
-			Shadows = true
-		},
-		["Lunar Vape New"] = {
-			Ambient = Color3.fromRGB(100, 54, 101),
-			OutdoorAmbient = Color3.fromRGB(175, 132, 163),
-			ColorShift_Bottom = Color3.fromRGB(255, 255, 255),
-			ColorShift_Top = Color3.fromRGB(255,255,255),
-			Enviroment = 0.8,
-			Brightness = 1,
-			Exposure = 0.8,
-			Lat = 326,
-			Time = 16 + (1/3),
-			Shadows = true
-		}
-	}
-
-	local GameThemes = Instance.new("Folder",replicatedStorageService)
-	GameThemes.Name = "Themes"
-
-	local TheMilkyWaySkyA = Instance.new("Sky",GameThemes)
-	TheMilkyWaySkyA.Name = "The Milky Way A"
-	TheMilkyWaySkyA.CelestialBodiesShown = false
-	TheMilkyWaySkyA.StarCount = 3000
-	TheMilkyWaySkyA.SkyboxUp = "rbxassetid://5559302033"
-	TheMilkyWaySkyA.SkyboxLf = "rbxassetid://5559292825"
-	TheMilkyWaySkyA.SkyboxFt = "rbxassetid://5559300879"
-	TheMilkyWaySkyA.SkyboxBk = "rbxassetid://5559289158"
-	TheMilkyWaySkyA.SkyboxDn = "rbxassetid://5559290893"
-	TheMilkyWaySkyA.SkyboxRt = "rbxassetid://5559302989"
-	TheMilkyWaySkyA.SunTextureId = "rbxasset://sky/sun.jpg"
-	TheMilkyWaySkyA.SunAngularSize = 1.44
-	TheMilkyWaySkyA.MoonTextureId = "rbxasset://sky/moon.jpg"
-	TheMilkyWaySkyA.MoonAngularSize = 0.57
-
-	local TheMilkyWaySkyB = Instance.new("Sky",GameThemes)
-	TheMilkyWaySkyB.Name = "The Milky Way B"
-	TheMilkyWaySkyB.CelestialBodiesShown = false
-	TheMilkyWaySkyB.StarCount = 3000
-	TheMilkyWaySkyB.SkyboxUp = "http://www.roblox.com/asset?id=232707707"
-	TheMilkyWaySkyB.SkyboxLf = "http://www.roblox.com/asset?id=232708001"
-	TheMilkyWaySkyB.SkyboxFt = "http://www.roblox.com/asset?id=232707879"
-	TheMilkyWaySkyB.SkyboxBk = "http://www.roblox.com/asset?id=232707959"
-	TheMilkyWaySkyB.SkyboxDn = "http://www.roblox.com/asset?id=232707790"
-	TheMilkyWaySkyB.SkyboxRt = "http://www.roblox.com/asset?id=232707983"
-
-	local TheMilkyWaySkyC = Instance.new("Sky",GameThemes)
-	TheMilkyWaySkyC.Name = "The Milky Way C"
-	TheMilkyWaySkyC.CelestialBodiesShown = false
-	TheMilkyWaySkyC.StarCount = 3000
-	TheMilkyWaySkyC.SkyboxUp = "rbxassetid://1903391299"
-	TheMilkyWaySkyC.SkyboxLf = "rbxassetid://1903388369"
-	TheMilkyWaySkyC.SkyboxFt = "rbxassetid://1903389258"
-	TheMilkyWaySkyC.SkyboxBk = "rbxassetid://1903390348"
-	TheMilkyWaySkyC.SkyboxDn = "rbxassetid://1903391981"
-	TheMilkyWaySkyC.SkyboxRt = "rbxassetid://1903387293"
-	TheMilkyWaySkyC.SunTextureId = "rbxasset://sky/sun.jpg"
-	TheMilkyWaySkyC.SunAngularSize = 21
-	TheMilkyWaySkyC.MoonTextureId = "rbxasset://sky/moon.jpg"
-	TheMilkyWaySkyC.MoonAngularSize = 11
-
-	local LunarVapeOld = Instance.new("Sky",GameThemes)
-	LunarVapeOld.Name = "Lunar Vape Old"
-	LunarVapeOld.CelestialBodiesShown = false
-	LunarVapeOld.StarCount = 3000
-	LunarVapeOld.SkyboxUp = "rbxassetid://2670644331"
-	LunarVapeOld.SkyboxLf = "rbxassetid://2670643070"
-	LunarVapeOld.SkyboxFt = "rbxassetid://2670643214"
-	LunarVapeOld.SkyboxBk = "rbxassetid://2670643994"
-	LunarVapeOld.SkyboxDn = "rbxassetid://2670643365"
-	LunarVapeOld.SkyboxRt = "rbxassetid://2670644173"
-	LunarVapeOld.SunTextureId = "rbxasset://sky/sun.jpg"
-	LunarVapeOld.SunAngularSize = 21
-	LunarVapeOld.MoonTextureId = "rbxassetid://1075087760"
-	LunarVapeOld.MoonAngularSize = 11
-
-	local LunarVapeNew = Instance.new("Sky",GameThemes)
-	LunarVapeNew.Name = "Lunar Vape New"
-	LunarVapeNew.CelestialBodiesShown = false
-	LunarVapeNew.StarCount = 0
-	LunarVapeNew.SkyboxUp = "http://www.roblox.com/asset/?id=458016792"
-	LunarVapeNew.SkyboxLf = "http://www.roblox.com/asset/?id=458016655"
-	LunarVapeNew.SkyboxFt = "http://www.roblox.com/asset/?id=458016532"
-	LunarVapeNew.SkyboxBk = "http://www.roblox.com/asset/?id=458016711"
-	LunarVapeNew.SkyboxDn = "http://www.roblox.com/asset/?id=458016826"
-	LunarVapeNew.SkyboxRt = "http://www.roblox.com/asset/?id=458016782"
-	LunarVapeNew.SunTextureId = "rbxasset://sky/sun.jpg"
-	LunarVapeNew.SunAngularSize = 21
-	LunarVapeNew.MoonTextureId = "rbxasset://sky/moon.jpg"
-	LunarVapeNew.MoonAngularSize = 11
-	
-	local ThemesModule = {Enabled = false}
-	local ThemesDropdown = {Value = "Lunar Vape New"}
-	ThemesModule = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = "Themes",
-		ExtraText = function(val) return ThemesDropdown.Value end,
-		Function = function(callback)
-			if callback then
-				for i,v in pairs(lightingService:GetChildren()) do v:Destroy() end
-				local newSky = GameThemes[ThemesDropdown.Value]:Clone()
-				newSky.Parent = lightingService
-				lightingService.Brightness = themeProps[ThemesDropdown.Value].Brightness
-				lightingService.ExposureCompensation = themeProps[ThemesDropdown.Value].Exposure
-				lightingService.EnvironmentDiffuseScale = themeProps[ThemesDropdown.Value].Enviroment
-				lightingService.EnvironmentSpecularScale = themeProps[ThemesDropdown.Value].Enviroment
-				lightingService.Ambient = themeProps[ThemesDropdown.Value].Ambient
-				lightingService.OutdoorAmbient = themeProps[ThemesDropdown.Value].OutdoorAmbient
-				lightingService.GeographicLatitude = themeProps[ThemesDropdown.Value].Lat
-				lightingService.ClockTime = themeProps[ThemesDropdown.Value].Time
-				lightingService.GlobalShadows = themeProps[ThemesDropdown.Value].Shadows
-				lightingService.ShadowSoftness = 0.5
-				sethiddenproperty(lightingService, "Technology", "Future")
-			else
-				lightingService.Brightness = 2
-				lightingService.EnvironmentDiffuseScale = 1
-				lightingService.EnvironmentSpecularScale = 1
-				lightingService.Ambient = Color3.fromRGB(89, 60, 86)
-				lightingService.OutdoorAmbient = Color3.fromRGB(216, 191, 161)
-				lightingService.GeographicLatitude = 0
-				lightingService.ClockTime = 14
-				lightingService.ShadowSoftness = 0.2
-				lightingService.ExposureCompensation = 0.1
-				lightingService.GlobalShadows = true
-				sethiddenproperty(lightingService, "Technology", "ShadowMap")
-				for i,v in pairs(lightingService:GetChildren()) do v:Destroy() end
-			end
-		end
-	})
-	ThemesDropdown = ThemesModule.CreateDropdown({
-		Name = "Theme",
-		List = {"The Milky Way A", "The Milky Way B", "The Milky Way C", "Lunar Vape Old","Lunar Vape New"},
-		Function = function(val)
-			if ThemesModule.Enabled then
-				for i,v in pairs(lightingService:GetChildren()) do v:Destroy() end
-				local newSky = GameThemes[val]:Clone()
-				newSky.Parent = lightingService
-				lightingService.Brightness = themeProps[ThemesDropdown.Value].Brightness
-				lightingService.ExposureCompensation = themeProps[ThemesDropdown.Value].Exposure
-				lightingService.EnvironmentDiffuseScale = themeProps[ThemesDropdown.Value].Enviroment
-				lightingService.EnvironmentSpecularScale = themeProps[ThemesDropdown.Value].Enviroment
-				lightingService.Ambient = themeProps[ThemesDropdown.Value].Ambient
-				lightingService.OutdoorAmbient = themeProps[ThemesDropdown.Value].OutdoorAmbient
-				lightingService.GeographicLatitude = themeProps[ThemesDropdown.Value].Lat
-				lightingService.ClockTime = themeProps[ThemesDropdown.Value].Time
-				lightingService.GlobalShadows = themeProps[ThemesDropdown.Value].Shadows
-				lightingService.ShadowSoftness = 0.5
-				sethiddenproperty(lightingService, "Technology", "Future")
-			end
-		end
-	})
-end)
-
-runFunction(function()
-	local infJump = {Enabled = false}
-	local jumpHold = {Enabled = false}
-	local connection
-	infJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "InfiniteJump",
-		Function = function(callback)
-			if callback then
-				connection = inputService.InputBegan:Connect(function(input)
-					if input.KeyCode == Enum.KeyCode.Space and (not inputService:GetFocusedTextBox()) and lplr.Character.Humanoid.Health > 0 then
-						repeat
-							task.wait()
-							lplr.Character:WaitForChild("Humanoid"):ChangeState("Jumping")
-						until (not infJump.Enabled) or (not jumpHold.Enabled) or (inputService:GetFocusedTextBox()) or (not inputService:IsKeyDown(Enum.KeyCode.Space))
-					end
-				end)
-			else
-				if connection then connection:Disconnect() end
-			end
-		end
-	})
-	jumpHold = infJump.CreateToggle({
-		Name = "Hold to jump",
-		Function = function() end,
-	})
-end)
-
-runFunction(function()
-	local iyloaded = false
-	local IYLoader = {Enabled = false}
-	IYLoader = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "InfiniteYield",
-		Function = function(callback)
-			if callback then
-				if iyloaded == false then
-					loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-					iyloaded = true
-				end
-				IYLoader.ToggleButton(false)
-			end
-		end
-	})
-end)
-
-runFunction(function()
-	local dexloaded = false
-	local DexV5Loader = {Enabled = false}
-	DexV5Loader = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "DexV5",
-		Function = function(callback)
-			if callback then
-				if dexloaded == false then
-					loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-					dexloaded = true
-				end
-				DexV5Loader.ToggleButton(false)
-			end
-		end
-	})
-end)
-
-runFunction(function()
-	local RemoteSpyLoader = {Enabled = false}
-	RemoteSpyLoader = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "SimpleSpy",
-		Function = function(callback)
-			if callback then
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua"))()
-				RemoteSpyLoader.ToggleButton(false)
-			end
-		end
-	})
-end)
-
-runFunction(function()
-	local presstwice = false
-	local cfbloaded = false
-	local ChatBypasser = {Enabled = false}
-	ChatBypasser = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
-		Name = "ChatFilterBypass",
-		HoverText = "Loads a script that bypasses certain words. (Keybind: J)",
-		Function = function(callback)
-			if callback then
-				if presstwice == false then
-					warningNotification("Lunar Vape (ChatBypasser)","Warning: Fluxus only, Enable again to run script.",5)
-					presstwice = true
-				else
-					if cbfloaded == false then
-						loadstring(game:HttpGet("https://raw.githubusercontent.com/synnyyy/synergy/additional/betterbypasser", true))({
-							Method = MethodToggle.Enabled and 3 or 1, -- Method 1 is the main method. Method two is emojis. Method 3 is full transparency, no special symbols. Method 3 has been improved!
-							Keybind = "J", -- Usually defaulted to F. You can change this keybind by replacing the string with a letter. Works for uppercase and lowercase.
-							ShowMethodDictionary = true -- Shows you the full list of words that you can say with the method. Press FN + F9 to see this dictionary.
-						})
-						cbfloaded = true
-					end
-				end
-				ChatBypasser.ToggleButton(false)
-			end
-		end
-	})
-	local MethodToggle = {Enabled = false}
-	MethodToggle = ChatBypasser.CreateToggle({
-		Name = "Use transparent method",
-		HoverText = "Uses transparent character to bypass filter, will load a UI with preset options.",
-		Function = function() end
-	})
-end)
-
-runFunction(function()
-	local chatDisable = {Enabled = false}
-	local chatVersion = function()
-		if game.Chat:GetChildren()[1] then return true else return false end
-	end
-	chatDisable = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = "ChatDisabled",
-		HoverText = "fuzetea request moment",
-		Function = function(callback)
-			if callback then
-				if chatVersion() then
-					game:GetService("Players").LocalPlayer.PlayerGui.Chat.Enabled = false
-					game:GetService("CoreGui").TopBarApp.TopBarFrame.LeftFrame.ChatIcon.Visible = false
-				elseif (not chatVersion()) then
-					game.CoreGui.ExperienceChat.Enabled = false
-					game:GetService("CoreGui").TopBarApp.TopBarFrame.LeftFrame.ChatIcon.Visible = false
-					game:GetService("TextChatService").ChatInputBarConfiguration.Enabled = false
-					game:GetService("TextChatService").BubbleChatConfiguration.Enabled = false
-				end
-			else
-				if chatVersion() then
-					game:GetService("Players").LocalPlayer.PlayerGui.Chat.Enabled = true
-					game:GetService("CoreGui").TopBarApp.TopBarFrame.LeftFrame.ChatIcon.Visible = true
-				elseif (not chatVersion()) then
-					game.CoreGui.ExperienceChat.Enabled = true
-					game:GetService("CoreGui").TopBarApp.TopBarFrame.LeftFrame.ChatIcon.Visible = true
-					game:GetService("TextChatService").ChatInputBarConfiguration.Enabled = true
-					game:GetService("TextChatService").BubbleChatConfiguration.Enabled = true
-				end
-			end
-		end
-	})
-end)
-
-runFunction(function()
-	if not (game.Chat:GetChildren()[1]) then
-		local chat = game.CoreGui.ExperienceChat:WaitForChild("appLayout")
-	end
-	local scaleSourceNew = game:GetService("TextChatService").ChatWindowConfiguration
-	local chatResize = {Enabled = false}
-	local chatPosX = {Value = 5}
-	local chatPosY = {Value = 4}
-	local chatScaleX = {Value = 0.85}
-	local chatScaleY = {Value = 1}
-	chatResize = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = "ChatResize",
-		HoverText = "works for only new chat",
-		Function = function(callback)
-			if callback then
-				if chat then
-					chat.Position = UDim2.new(chatPosX.Value / 1000,0,chatPosY.Value / 1000,0)
-					scaleSourceNew.WidthScale = chatScaleX.Value / 100
-					scaleSourceNew.HeightScale = chatScaleY.Value / 100
-				end
-			else
-				if chat then
-					chat.Position = UDim2.new(0,8,0,4)
-					scaleSourceNew.WidthScale = 1
-					scaleSourceNew.HeightScale = 0.85
-				end
-			end
-		end
-	})
-	chatPosX = chatResize.CreateSlider({
-		Name = "Position (X)",
-		Min = 0,
-		Max = 1000,
-		Default = 8,
-		Function = function(val) 
-			if chatResize.Enabled then
-				chat.Position = UDim2.new(val / 1000,0,chatPosY.Value / 1000,0)
-			end
-		end
-	})
-	chatPosY = chatResize.CreateSlider({
-		Name = "Position (Y)",
-		Min = 0,
-		Max = 1000,
-		Default = 4,
-		Function = function(val)
-			if chatResize.Enabled then
-				chat.Position = UDim2.new(chatPosX.Value / 1000,0,val / 1000,0)
-			end
-		end
-	})
-	chatScaleX = chatResize.CreateSlider({
-		Name = "Scale (X)",
-		Min = 50,
-		Max = 78,
-		Default = 100,
-		Function = function(val)
-			if chatResize.Enabled then
-				scaleSourceNew.WidthScale = val / 100
-			end
-		end
-	})
-	chatScaleY = chatResize.CreateSlider({
-		Name = "Scale (Y)",
-		Min = 50,
-		Max = 133,
-		Default = 85,
-		Function = function(val)
-			if chatResize.Enabled then
-				scaleSourceNew.HeightScale = val / 100
-			end
-		end
-	})
-end)
-
---legit modules here
-
 runFunction(function()
 	local FPS = {}
 	local FPSLabel
@@ -6190,39 +5762,41 @@ runFunction(function()
 		Name = "FPS",
 		Function = function(callback)
 			if callback then 
-				spawn(function()
-					game.RunService.RenderStepped:Connect(function(frame)
-						FPSLabel.Text = (math.round(1/frame).." FPS") 
-					end)
+				local frames = {}
+				local framerate = 0
+				local startClock = os.clock()
+				local updateTick = tick()
+				RunLoops:BindToHeartbeat("FPS", function()
+					-- https://devforum.roblox.com/t/get-client-fps-trough-a-script/282631, annoying math, I thought either adding dt to a table or doing 1 / dt would work, but this is just better lol
+					local updateClock = os.clock()
+					for i = #frames, 1, -1 do
+						frames[i + 1] = frames[i] >= updateClock - 1 and frames[i] or nil
+					end
+					frames[1] = updateClock
+					if updateTick < tick() then 
+						updateTick = tick() + 1
+						FPSLabel.Text = math.floor(os.clock() - startClock >= 1 and #frames or #frames / (os.clock() - startClock)).." FPS"
+					end
 				end)
+			else
+				RunLoops:UnbindFromHeartbeat("FPS")
 			end
 		end
 	})
 	FPSLabel = Instance.new("TextLabel")
-	FPSLabel.Size = UDim2.new(0, 135, 0, 50)
-	FPSLabel.BackgroundTransparency = 0.325
-	FPSLabel.TextSize = 24
-	FPSLabel.Font = Enum.Font.Arcade
-	FPSLabel.Text = "nil FPS"
+	FPSLabel.Size = UDim2.new(0, 100, 0, 41)
+	FPSLabel.BackgroundTransparency = 0.5
+	FPSLabel.TextSize = 15
+	FPSLabel.Font = Enum.Font.Gotham
+	FPSLabel.Text = "inf FPS"
 	FPSLabel.TextColor3 = Color3.new(1, 1, 1)
 	FPSLabel.BackgroundColor3 = Color3.new()
-	FPSLabel.BorderSizePixel = 0
 	FPSLabel.Parent = FPS.GetCustomChildren()
+	local ReachCorner = Instance.new("UICorner")
+	ReachCorner.CornerRadius = UDim.new(0, 4)
+	ReachCorner.Parent = FPSLabel
 end)
 
-runFunction(function()
-	local fpslegit = {}
-	fpslegit = GuiLibrary.CreateLegitModule({
-		Name = 'FPS Unlocker',
-		Function = function(callback)
-			if callback then
-				setfpscap(3000)
-			else
-				setfpscap(60)
-			end
-		end
-	})
-end)
 
 runFunction(function()
 	local Ping = {}
@@ -6233,7 +5807,7 @@ runFunction(function()
 			if callback then 
 				task.spawn(function()
 					repeat 
-						PingLabel.Text = math.floor(tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue())).."ms"
+						PingLabel.Text = math.floor(tonumber(game:GetService("Stats"):FindFirstChild("PerformanceStats").Ping:GetValue())).." ms"
 						task.wait(1)
 					until false
 				end)
@@ -6241,53 +5815,17 @@ runFunction(function()
 		end
 	})
 	PingLabel = Instance.new("TextLabel")
-	PingLabel.Size = UDim2.new(0, 135, 0, 50)
-	PingLabel.BackgroundTransparency = 0.325
-	PingLabel.TextSize = 24
-	PingLabel.Font = Enum.Font.Arcade
-	PingLabel.Text = "nil ms"
+	PingLabel.Size = UDim2.new(0, 100, 0, 41)
+	PingLabel.BackgroundTransparency = 0.5
+	PingLabel.TextSize = 15
+	PingLabel.Font = Enum.Font.Gotham
+	PingLabel.Text = "0 ms"
 	PingLabel.TextColor3 = Color3.new(1, 1, 1)
 	PingLabel.BackgroundColor3 = Color3.new()
-	PingLabel.BorderSizePixel = 0
 	PingLabel.Parent = Ping.GetCustomChildren()
-end)
-
-runFunction(function()
-	local CoordsModule = {Enabled = false}
-	local CoordsDisplay
-    local hrootpart
-    local xpos
-    local ypos
-    local zpos
-	CoordsModule = GuiLibrary.CreateLegitModule({
-		Name = "Coordinates",
-		Function = function(callback)
-			if callback then
-                task.spawn(function()
-                    repeat
-                        task.wait(0.05)
-						if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character.PrimaryPart then
-                        	hrootpart = game.Players.LocalPlayer.Character.PrimaryPart
-                        	xpos = (math.round(hrootpart.Position.X * 100) / 100)
-                        	ypos = (math.round(hrootpart.Position.Y * 100) / 100)
-                        	zpos = (math.round(hrootpart.Position.Z * 100) / 100)
-                        	CoordsDisplay.Text = "X: "..tostring(xpos).." Y: "..tostring(ypos).." Z: "..tostring(zpos)
-						end
-					until (not CoordsModule.Enabled)
-                end)
-            end
-		end
-	})
-	CoordsDisplay = Instance.new("TextLabel")
-	CoordsDisplay.Size = UDim2.new(0, 410, 0, 50)
-	CoordsDisplay.BackgroundTransparency = 0.325
-	CoordsDisplay.TextSize = 24
-	CoordsDisplay.Font = Enum.Font.Arcade
-	CoordsDisplay.Text = "X: 0  Y: 0  Z: 0"
-	CoordsDisplay.TextColor3 = Color3.new(1, 1, 1)
-	CoordsDisplay.BackgroundColor3 = Color3.new()
-	CoordsDisplay.BorderSizePixel = 0
-	CoordsDisplay.Parent = CoordsModule.GetCustomChildren()
+	local PingCorner = Instance.new("UICorner")
+	PingCorner.CornerRadius = UDim.new(0, 4)
+	PingCorner.Parent = PingLabel
 end)
 
 runFunction(function()
@@ -6296,36 +5834,29 @@ runFunction(function()
 	local keystrokesframe
 	local keyconnection1
 	local keyconnection2
-	local mouseconnection1
-	local mouseconnection2
-	local lmbconnection1
-	local lmbconnection2
-	local rmbconnection1
-	local rmbconnection2
-	local lcpsamount = 0
-	local rcpsamount = 0
-	local mousecheck = lplr:GetMouse()
 
 	local function createKeystroke(keybutton, pos, pos2)
 		local key = Instance.new("Frame")
-		key.Size = keybutton == Enum.KeyCode.Space and UDim2.new(0, 158, 0, 30) or keybutton == "CPS" and UDim2.new(0, 158, 0, 30) or keybutton == "LMB" and UDim2.new(0, 77, 0, 50) or keybutton == "RMB" and UDim2.new(0, 77, 0, 50) or UDim2.new(0, 50, 0, 50)
+		key.Size = keybutton == Enum.KeyCode.Space and UDim2.new(0, 110, 0, 24) or UDim2.new(0, 34, 0, 36)
 		key.BackgroundColor3 = Color3.new()
-		key.BackgroundTransparency = 0.325
+		key.BackgroundTransparency = 0.5
 		key.Position = pos
-		key.Name = keybutton == "CPS" and "CPS" or keybutton == "LMB" and "LMB" or keybutton == "RMB" and "RMB" or keybutton.Name
+		key.Name = keybutton.Name
 		key.Parent = keystrokesframe
-		key.BorderSizePixel = 0
 		local keytext = Instance.new("TextLabel")
 		keytext.BackgroundTransparency = 1
 		keytext.Size = UDim2.new(1, 0, 1, 0)
-		keytext.Font = keybutton == Enum.KeyCode.Space and Enum.Font.GothamBlack or Enum.Font.Arcade
-		keytext.Text = keybutton == Enum.KeyCode.Space and "_____" or keybutton == "CPS" and "0 LCPS | 0 RCPS" or keybutton == "LMB" and "LMB" or keybutton == "RMB" and "RMB" or keybutton.Name
-		keytext.TextXAlignment = Enum.TextXAlignment.Center
-		keytext.TextYAlignment = Enum.TextYAlignment.Center
+		keytext.Font = Enum.Font.Gotham
+		keytext.Text = keybutton == Enum.KeyCode.Space and "______" or keybutton.Name
+		keytext.TextXAlignment = Enum.TextXAlignment.Left
+		keytext.TextYAlignment = Enum.TextYAlignment.Top
 		keytext.Position = pos2
-		keytext.TextSize = keybutton == Enum.KeyCode.Space and 28 or keybutton == "CPS" and 15 or 24
+		keytext.TextSize = keybutton == Enum.KeyCode.Space and 18 or 15
 		keytext.TextColor3 = Color3.new(1, 1, 1)
 		keytext.Parent = key
+		local keycorner = Instance.new("UICorner")
+		keycorner.CornerRadius = UDim.new(0, 4)
+		keycorner.Parent = key
 		keys[keybutton] = {Key = key}
 	end
 
@@ -6344,84 +5875,20 @@ runFunction(function()
 						key.Tween2:Play()
 					end
 				end)
-				lmbconnection1 = mousecheck.Button1Down:Connect(function()
-					local key = keys["LMB"]
-					if key then 
-						if key.Tween then key.Tween:Cancel() end
-						if key.Tween2 then key.Tween2:Cancel() end
-						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0})
-						key.Tween:Play()
-						key.Tween2 = tweenService:Create(key.Key.TextLabel, TweenInfo.new(0.1), {TextColor3 = Color3.new()})
-						key.Tween2:Play()
-					end
-				end)
-				rmbconnection1 = mousecheck.Button2Down:Connect(function()
-					local key = keys["RMB"]
-					if key then 
-						if key.Tween then key.Tween:Cancel() end
-						if key.Tween2 then key.Tween2:Cancel() end
-						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0})
-						key.Tween:Play()
-						key.Tween2 = tweenService:Create(key.Key.TextLabel, TweenInfo.new(0.1), {TextColor3 = Color3.new()})
-						key.Tween2:Play()
-					end
-				end)
 				keyconnection2 = inputService.InputEnded:Connect(function(inputType)
 					local key = keys[inputType.KeyCode]
 					if key then 
 						if key.Tween then key.Tween:Cancel() end
 						if key.Tween2 then key.Tween2:Cancel() end
-						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(), BackgroundTransparency = 0.325})
+						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(), BackgroundTransparency = 0.5})
 						key.Tween:Play()
 						key.Tween2 = tweenService:Create(key.Key.TextLabel, TweenInfo.new(0.1), {TextColor3 = Color3.new(1, 1, 1)})
 						key.Tween2:Play()
 					end
-				end)
-				lmbconnection2 = mousecheck.Button1Up:Connect(function()
-					local key = keys['LMB']
-					if key then 
-						if key.Tween then key.Tween:Cancel() end
-						if key.Tween2 then key.Tween2:Cancel() end
-						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(), BackgroundTransparency = 0.325})
-						key.Tween:Play()
-						key.Tween2 = tweenService:Create(key.Key.TextLabel, TweenInfo.new(0.1), {TextColor3 = Color3.new(1, 1, 1)})
-						key.Tween2:Play()
-					end
-				end)
-				rmbconnection2 = mousecheck.Button2Up:Connect(function()
-					local key = keys['RMB']
-					if key then 
-						if key.Tween then key.Tween:Cancel() end
-						if key.Tween2 then key.Tween2:Cancel() end
-						key.Tween = tweenService:Create(key.Key, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(), BackgroundTransparency = 0.325})
-						key.Tween:Play()
-						key.Tween2 = tweenService:Create(key.Key.TextLabel, TweenInfo.new(0.1), {TextColor3 = Color3.new(1, 1, 1)})
-						key.Tween2:Play()
-					end
-				end)
-				mouseconnection1 = mousecheck.Button1Down:Connect(function()
-					lcpsamount = lcpsamount + 1
-					keys["CPS"].Key.TextLabel.Text = tostring(lcpsamount).." LCPS | "..tostring(rcpsamount).." RCPS"
-					wait(1)
-					lcpsamount = lcpsamount - 1
-					keys["CPS"].Key.TextLabel.Text = tostring(lcpsamount).." LCPS | "..tostring(rcpsamount).." RCPS"
-				end)
-				mouseconnection2 = mousecheck.Button2Down:Connect(function()
-					rcpsamount = rcpsamount + 1
-					keys["CPS"].Key.TextLabel.Text = tostring(lcpsamount).." LCPS | "..tostring(rcpsamount).." RCPS"
-					wait(1)
-					rcpsamount = rcpsamount - 1
-					keys["CPS"].Key.TextLabel.Text = tostring(lcpsamount).." LCPS | "..tostring(rcpsamount).." RCPS"
 				end)
 			else
 				if keyconnection1 then keyconnection1:Disconnect() end
-				if lmbconnection1 then lmbconnection1:Disconnect() end
-				if rmbconnection1 then rmbconnection1:Disconnect() end
 				if keyconnection2 then keyconnection2:Disconnect() end
-				if lmbconnection2 then lmbconnection2:Disconnect() end
-				if rmbconnection2 then rmbconnection2:Disconnect() end
-				if mouseconnection1 then mouseconnection1:Disconnect() end
-				if mouseconnection2 then mouseconnection2:Disconnect() end
 			end
 		end
 	})
@@ -6429,114 +5896,57 @@ runFunction(function()
 	keystrokesframe.Size = UDim2.new(0, 110, 0, 176)
 	keystrokesframe.BackgroundTransparency = 1
 	keystrokesframe.Parent = Keystrokes.GetCustomChildren()
-	createKeystroke(Enum.KeyCode.W, UDim2.new(0, 54, 0, 0), UDim2.new(0, 0, 0, 0))
-	createKeystroke(Enum.KeyCode.S, UDim2.new(0, 54, 0, 54), UDim2.new(0, 0, 0, 0))
-	createKeystroke(Enum.KeyCode.A, UDim2.new(0, 0, 0, 54), UDim2.new(0, 0, 0, 0))
-	createKeystroke(Enum.KeyCode.D, UDim2.new(0, 108, 0, 54), UDim2.new(0, 0, 0, 0))
-	createKeystroke(Enum.KeyCode.Space, UDim2.new(0, 0, 0, 162), UDim2.new(0, 0, 0, -10))
-	createKeystroke("LMB",  UDim2.new(0, 0, 0, 108),  UDim2.new(0, 0, 0, 0))
-	createKeystroke("RMB",  UDim2.new(0, 81, 0, 108),  UDim2.new(0, 0, 0, 0))
-	createKeystroke("CPS",  UDim2.new(0, 0, 0, 196),  UDim2.new(0, 0, 0, 0))
+	createKeystroke(Enum.KeyCode.W, UDim2.new(0, 38, 0, 0), UDim2.new(0, 6, 0, 5))
+	createKeystroke(Enum.KeyCode.S, UDim2.new(0, 38, 0, 42), UDim2.new(0, 8, 0, 5))
+	createKeystroke(Enum.KeyCode.A, UDim2.new(0, 0, 0, 42), UDim2.new(0, 7, 0, 5))
+	createKeystroke(Enum.KeyCode.D, UDim2.new(0, 76, 0, 42), UDim2.new(0, 8, 0, 5))
+	createKeystroke(Enum.KeyCode.Space, UDim2.new(0, 0, 0, 83), UDim2.new(0, 25, 0, -10))
 end)
-
 runFunction(function()
-	local PlrAlive = {Enabled = false}
-	local PlrAliveLabel
-	PlrAlive = GuiLibrary.CreateLegitModule({
-		Name = "Alive Count",
-		Function = function(callback)
-			if callback then 
-				spawn(function()
-					repeat
-						local AliveCount = 0
-						task.wait(0.1)
-						for i,plr in pairs(game.Players:GetPlayers()) do
-							if plr.Character:FindFirstChild("Humanoid") and plr.Character:FindFirstChild("Humanoid").Health > 0 and plr.Character:FindFirstChild("HumanoidRootPart") then
-								AliveCount = AliveCount + 1
-							end
-						end
-						PlrAliveLabel.Text = tostring(AliveCount).." PLAYERS ALIVE"
-					until not PlrAlive.Enabled
-				end)
-			end
-		end
-	})
-	PlrAliveLabel = Instance.new("TextLabel")
-	PlrAliveLabel.Size = UDim2.new(0, 230, 0, 50)
-	PlrAliveLabel.BackgroundTransparency = 0.325
-	PlrAliveLabel.TextSize = 24
-	PlrAliveLabel.Font = Enum.Font.Arcade
-	PlrAliveLabel.Text = "0 PLAYERS ALIVE"
-	PlrAliveLabel.TextColor3 = Color3.new(1, 1, 1)
-	PlrAliveLabel.BackgroundColor3 = Color3.new()
-	PlrAliveLabel.BorderSizePixel = 0
-	PlrAliveLabel.Parent = PlrAlive.GetCustomChildren()
-end)
+    local connection
+    local jumpConnection
+    local jumping = false
 
-runFunction(function()
-	local LogoConnection
-	local LVWatermark = {}
-	LVWatermark = GuiLibrary.CreateLegitModule({
-		Name = "Watermark",
-		Function = function(callback) end
-	})
-	local MainFrame = Instance.new("Frame")
-	MainFrame.Name = "MainFrame"
-	MainFrame.Parent = LVWatermark.GetCustomChildren()
-	MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	MainFrame.BackgroundTransparency = 1.000
-	MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	MainFrame.BorderSizePixel = 0
-	MainFrame.Position = UDim2.new(0, 20, 0, 16)
-	MainFrame.Size = UDim2.new(0, 450, 0, 120)
-	
-	local LogoButton = Instance.new("ImageLabel")
-	LogoButton.Name = "LogoButton"
-	LogoButton.Parent = MainFrame
-	LogoButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	LogoButton.BackgroundTransparency = 1.000
-	LogoButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	LogoButton.BorderSizePixel = 0
-	LogoButton.Size = UDim2.new(0, 120, 0, 120)
-	LogoButton.Image = "rbxassetid://14037438801"
-	
-	local TitleText = Instance.new("TextLabel")
-	TitleText.Name = "TitleText"
-	TitleText.Parent = MainFrame
-	TitleText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	TitleText.BackgroundTransparency = 1.000
-	TitleText.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TitleText.BorderSizePixel = 0
-	TitleText.LayoutOrder = 3
-	TitleText.Position = UDim2.new(0, 140, 0, 22)
-	TitleText.Size = UDim2.new(0, 300, 0, 55)
-	TitleText.Font = Enum.Font.GothamBold
-	TitleText.Text = "Lunar Vape"
-	TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TitleText.TextSize = 60.000
-	
-	local UIGradient = Instance.new("UIGradient")
-	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(0.18, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(210, 50, 255))}
-	UIGradient.Rotation = 90
-	UIGradient.Parent = TitleText
-	
-	local ExtraText = Instance.new("TextLabel")
-	ExtraText.Name = "ExtraText"
-	ExtraText.Parent = MainFrame
-	ExtraText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	ExtraText.BackgroundTransparency = 0.750
-	ExtraText.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	ExtraText.BorderSizePixel = 0
-	ExtraText.Position = UDim2.new(0, 130, 0, 80)
-	ExtraText.Size = UDim2.new(0, 320, 0, 25)
-	ExtraText.Font = Enum.Font.GothamBold
-	ExtraText.Text = "by @iraqicat | version 1.2 | enjoy the config!"
-	ExtraText.TextColor3 = Color3.fromRGB(202, 45, 255)
-	ExtraText.TextSize = 15.000
-	ExtraText.TextWrapped = true
-	
-	local SmoothCorner = Instance.new("UICorner")
-	SmoothCorner.CornerRadius = UDim.new(0, 2048)
-	SmoothCorner.Name = "Smooth"
-	SmoothCorner.Parent = ExtraText
+    InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+        Name = "UInfiniteJump",
+        Function = function(callback)
+            if callback then
+                connection = game:GetService("UserInputService").InputBegan:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        if not game:GetService("UserInputService"):GetFocusedTextBox() then
+                            jumping = true
+                            local character = game:GetService("Players").LocalPlayer.Character
+                            local humanoid = character:FindFirstChildOfClass("Humanoid")
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoid and humanoidRootPart then
+                                jumpConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                                    while jumping do
+                                        humanoid:ChangeState("Jumping")
+                                        humanoidRootPart.Velocity = Vector3.new(humanoidRootPart.Velocity.X, 80, humanoidRootPart.Velocity.Z)
+                                        wait(0.01)
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end)
+
+                game:GetService("UserInputService").InputEnded:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        jumping = false
+                        if jumpConnection then
+                            jumpConnection:Disconnect()
+                        end
+                    end
+                end)
+            else
+                if connection then
+                    connection:Disconnect()
+                end
+                if jumpConnection then
+                    jumpConnection:Disconnect()
+                end
+            end
+        end
+    })
 end)
