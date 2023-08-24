@@ -6172,6 +6172,23 @@ runFunction(function()
 end)
 
 runFunction(function()
+	local iyloaded = false
+	local SB = {Enabled = false}
+	SB = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+		Name = "Slap Battles",
+		Function = function(callback)
+			if callback then
+				if iyloaded == false then
+					loadstring(game:HttpGet(("https://raw.githubusercontent.com/ionlyusegithubformcmods/1-Line-Scripts/main/Slap%20Battles")))()
+					iyloaded = true
+				end
+				SB.ToggleButton(false)
+			end
+		end
+	})
+end)
+									
+runFunction(function()
 	local dexloaded = false
 	local DexV5Loader = {Enabled = false}
 	DexV5Loader = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
