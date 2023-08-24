@@ -6102,7 +6102,7 @@ runFunction(function()
 	ExtraText.Position = UDim2.new(0, 130, 0, 80)
 	ExtraText.Size = UDim2.new(0, 320, 0, 25)
 	ExtraText.Font = Enum.Font.GothamBold
-	ExtraText.Text = "by @Selever | version 1 | enjoy the config!"
+	ExtraText.Text = "by @Selever | Version 2 | enjoy the config!"
 	ExtraText.TextColor3 = Color3.fromRGB(202, 45, 255)
 	ExtraText.TextSize = 15.000
 	ExtraText.TextWrapped = true
