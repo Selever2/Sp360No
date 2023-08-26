@@ -11984,7 +11984,7 @@ Watermark = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsBut
     end,
     HoverText = "Gaming Rainbow watermark"
 })
-local Messages = {"Bam!", "Boom!", "Pam!", "Ouch!", "Oof!"}
+local Messages = {"Bam!", "Boom!", "Pam!", "Ouch!", "Skid!", "Oof!"}
 local old
 local FunnyIndicator = {Enabled = false}
 FunnyIndicator = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsButton({
@@ -13528,7 +13528,7 @@ txt.OnIncomingMessage = function(msg)
 				if v.id == userId then
 					if not hasTag then
 						hasTag = true
-						p.PrefixText = "<font color='#7f00ff'>[SP+ Claimer💜)]</font> " .. msg.PrefixText
+						p.PrefixText = "<font color='#7f00ff'>[Skidware Owner💜)]</font> " .. msg.PrefixText
 					end
 					userType = 3
 				end
