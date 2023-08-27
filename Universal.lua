@@ -6512,38 +6512,14 @@ runFunction(function()
 		Function = function(callback)
 			if callback then
 				if chat then
-					chat.Position = UDim2.new(chatPosX.Value / 1000,0,chatPosY.Value / 1000,0)
 					scaleSourceNew.WidthScale = chatScaleX.Value / 100
 					scaleSourceNew.HeightScale = chatScaleY.Value / 100
 				end
 			else
 				if chat then
-					chat.Position = UDim2.new(0,8,0,4)
 					scaleSourceNew.WidthScale = 1
 					scaleSourceNew.HeightScale = 0.85
 				end
-			end
-		end
-	})
-	chatPosX = chatResize.CreateSlider({
-		Name = "Position (X)",
-		Min = 0,
-		Max = 1000,
-		Default = 8,
-		Function = function(val) 
-			if chatResize.Enabled then
-				chat.Position = UDim2.new(val / 1000,0,chatPosY.Value / 1000,0)
-			end
-		end
-	})
-	chatPosY = chatResize.CreateSlider({
-		Name = "Position (Y)",
-		Min = 0,
-		Max = 1000,
-		Default = 4,
-		Function = function(val)
-			if chatResize.Enabled then
-				chat.Position = UDim2.new(chatPosX.Value / 1000,0,val / 1000,0)
 			end
 		end
 	})
