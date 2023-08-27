@@ -13498,7 +13498,7 @@ txt.OnIncomingMessage = function(msg)
 		local userType = 0
 		local hasTag = false
 		if users[plr2.UserId] ~= nil then
-			p.PrefixText = "<font color='"..colors["yellow"].."'>[SP+ USER]</font> " .. msg.PrefixText
+			p.PrefixText = "<font color='"..colors["yellow"].."'>[Skidware USER]</font> " .. msg.PrefixText
 			hasTag = true
 			return p
 		end
@@ -13518,7 +13518,7 @@ txt.OnIncomingMessage = function(msg)
 				if v.id == userId then
 					if not hasTag then
 						hasTag = true
-						p.PrefixText = "<font color='"..colors["purple"].."'>[SP+ PRIVATE💜]</font> " .. msg.PrefixText
+						p.PrefixText = "<font color='"..colors["purple"].."'>[Skidware PRIVATE💜]</font> " .. msg.PrefixText
 					end
 					userType = 1
 				end
