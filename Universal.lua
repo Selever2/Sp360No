@@ -6118,7 +6118,8 @@ runFunction(function()
     local jumping = false
 
     InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-        Name = "UInfiniteJump",
+        Name = "InfJump",
+        HoverText = "Old SnoopyConfigs InfJump",
         Function = function(callback)
             if callback then
                 connection = game:GetService("UserInputService").InputBegan:Connect(function(inputObject, gameProcessedEvent)
@@ -6133,7 +6134,7 @@ runFunction(function()
                                     while jumping do
                                         humanoid:ChangeState("Jumping")
                                         humanoidRootPart.Velocity = Vector3.new(humanoidRootPart.Velocity.X, 80, humanoidRootPart.Velocity.Z)
-                                        wait(0.01)
+                                        wait(0.008)
                                     end
                                 end)
                             end
