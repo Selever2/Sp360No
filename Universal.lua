@@ -6118,8 +6118,8 @@ runFunction(function()
     local jumping = false
 
     InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-        Name = "InfJump",
-        HoverText = "Old SnoopyConfigs InfJump",
+        Name = "UInfJump",
+        HoverText = "Universal",
         Function = function(callback)
             if callback then
                 connection = game:GetService("UserInputService").InputBegan:Connect(function(inputObject, gameProcessedEvent)
