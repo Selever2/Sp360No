@@ -12193,6 +12193,57 @@ Keystrokes = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsBu
 })
 
 runFunction(function()
+    local connection
+    local jumpConnection
+    local jumping = false
+
+    InfiniteJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+        Name = "InfJump",
+        HoverText = "Old SnoopyConfigs InfJump",
+        Function = function(callback)
+            if callback then
+                connection = game:GetService("UserInputService").InputBegan:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        if not game:GetService("UserInputService"):GetFocusedTextBox() then
+                            jumping = true
+                            local character = game:GetService("Players").LocalPlayer.Character
+                            local humanoid = character:FindFirstChildOfClass("Humanoid")
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoid and humanoidRootPart then
+                                jumpConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                                    while jumping do
+                                        humanoid:ChangeState("Jumping")
+                                        humanoidRootPart.Velocity = Vector3.new(humanoidRootPart.Velocity.X, 80, humanoidRootPart.Velocity.Z)
+                                        wait(0.008)
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end)
+
+                game:GetService("UserInputService").InputEnded:Connect(function(inputObject, gameProcessedEvent)
+                    if inputObject.KeyCode == Enum.KeyCode.Space and not gameProcessedEvent then
+                        jumping = false
+                        if jumpConnection then
+                            jumpConnection:Disconnect()
+                        end
+                    end
+                end)
+            else
+                if connection then
+                    connection:Disconnect()
+                end
+                if jumpConnection then
+                    jumpConnection:Disconnect()
+                end
+            end
+        end
+    })
+end)
+
+
+runFunction(function()
 	FPSUnlocker = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 		Name = "FPSUnlocker",
 		Function = function(callback)
