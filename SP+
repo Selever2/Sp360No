@@ -11963,7 +11963,7 @@ Watermark = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsBut
     end,
     HoverText = "Gaming Rainbow watermark"
 })
-local Messages = {"Bam!", "Boom!", "Pam!", "Ouch!", "Skid!", "Oof!"}
+local Messages = {"Skidware!", "Skid On Top!", ".gg/z9dzcutNhX", "Get Skidware", "Skid!", ""}
 local old
 local FunnyIndicator = {Enabled = false}
 FunnyIndicator = GuiLibrary.ObjectsThatCanBeSaved.VelocityWindow.Api.CreateOptionsButton({
