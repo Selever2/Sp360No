@@ -11602,8 +11602,9 @@ end)
 	local ClickTPRaycast = RaycastParams.new()
 	ClickTPRaycast.RespectCanCollide = true
 	ClickTPRaycast.FilterType = Enum.RaycastFilterType.Blacklist
-	ClickTP = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	ClickTP = GuiLibrary.ObjectsThatCanBeSaved.SkidwareWindow.Api.CreateOptionsButton({
 		Name = "MouseTP", 
+        HoverText = "LunarVape Property",
 		Function = function(callback) 
 			if callback then
 				RunLoops:BindToHeartbeat("MouseTP", function()
