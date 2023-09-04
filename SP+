@@ -11444,7 +11444,7 @@ end)
 runFunction(function()
 	local dashDisabler = {Enabled = false}
 	local speedChanger = {Value = 28}
-	dashDisabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	dashDisabler = GuiLibrary.ObjectsThatCanBeSaved.SkidwareWindow.Api.CreateOptionsButton({
 		Name = "AnticheatBypass",
 		HoverText = "(re-enable with scythe to bypass) firewallbypass but better (dont use it on japan server)",
 		ExtraText = function() return tostring(speedChanger.Value).."CFrame" end,
@@ -11604,7 +11604,6 @@ end)
 	ClickTPRaycast.FilterType = Enum.RaycastFilterType.Blacklist
 	ClickTP = GuiLibrary.ObjectsThatCanBeSaved.SkidwareWindow.Api.CreateOptionsButton({
 		Name = "MouseTP", 
-        HoverText = "LunarVape Property",
 		Function = function(callback) 
 			if callback then
 				RunLoops:BindToHeartbeat("MouseTP", function()
@@ -11647,7 +11646,7 @@ end)
 				RunLoops:UnbindFromHeartbeat("MouseTP")
 			end
 		end, 
-		HoverText = "Teleports to where your mouse is."
+		HoverText = "LunarVape Property"
 	})
 	ClickTPMethod = ClickTP.CreateDropdown({
 		Name = "Method",
