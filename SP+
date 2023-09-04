@@ -11467,7 +11467,7 @@ runFunction(function()
 					until not dashDisabler.Enabled
 				end)
 			else
-				task.wait(0.05)
+				task.wait(0.005)
 				bedwarsStore.scythe = tick()
 			end
 		end
