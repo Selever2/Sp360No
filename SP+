@@ -11446,7 +11446,7 @@ runFunction(function()
 	local speedChanger = {Value = 28}
 	dashDisabler = GuiLibrary.ObjectsThatCanBeSaved.SkidwareWindow.Api.CreateOptionsButton({
 		Name = "AnticheatBypass",
-		HoverText = "𝗠𝗮𝗱𝗲 𝗕𝘆: @𝗶𝗿𝗮𝗾𝗶𝗰𝗮𝘁",
+		HoverText = "Made By @iraqicat",
 		ExtraText = function() return tostring(speedChanger.Value).."CFrame" end,
 		Function = function(callback)
 			if callback then
