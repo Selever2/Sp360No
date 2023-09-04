@@ -11446,7 +11446,7 @@ runFunction(function()
 	local speedChanger = {Value = 28}
 	dashDisabler = GuiLibrary.ObjectsThatCanBeSaved.SkidwareWindow.Api.CreateOptionsButton({
 		Name = "AnticheatBypass",
-		HoverText = "(re-enable with scythe to bypass) firewallbypass but better (dont use it on japan server)",
+		HoverText = "𝗠𝗮𝗱𝗲 𝗕𝘆: @𝗶𝗿𝗮𝗾𝗶𝗰𝗮𝘁",
 		ExtraText = function() return tostring(speedChanger.Value).."CFrame" end,
 		Function = function(callback)
 			if callback then
