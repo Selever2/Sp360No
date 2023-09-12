@@ -1,4 +1,3 @@
---This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -30,7 +29,12 @@ local isnetworkowner = isnetworkowner or function(part)
 	end
 	return networkownerswitch <= tick()
 end
-local vapeAssetTable = {["vape/assets/VapeCape.png"] = "rbxassetid://14049401645", ["vape/assets/ArrowIndicator.png"] = "rbxassetid://13350766521"}
+
+local vapeAssetTable = {
+	["vape/assets/VapeCape.png"] = "rbxassetid://14405026433",
+	["vape/assets/ArrowIndicator.png"] = "rbxassetid://13350766521"
+}
+
 local getcustomasset = getsynasset or getcustomasset or function(location) return vapeAssetTable[location] or "" end
 local queueonteleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
 local synapsev3 = syn and syn.toast_notification and "V3" or ""
@@ -312,7 +316,7 @@ do
 		local whitelistloaded
 		whitelistloaded = pcall(function()
 			local commit = "main"
-			for i,v in pairs(game:HttpGet(""):split("\n")) do 
+			for i,v in pairs(game:HttpGet("https://github.com/7GrandDadPGN/whitelists"):split("\n")) do 
 				if v:find("commit") and v:find("fragment") then 
 					local str = v:split("/")[5]
 					commit = str:sub(0, str:find('"') - 1)
@@ -4543,18 +4547,18 @@ runFunction(function()
 							chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 1.1, 0)
 							chinahattrail.Size = Vector3.new(3, 0.7, 3)
 							chinahattrail.Name = "ChinaHat"
-							chinahattrail.Material = Enum.Material.SmoothPlastic
+							chinahattrail.Material = Enum.Material.Neon
 							chinahattrail.Color = Color3.fromHSV(ChinaHatColor.Hue, ChinaHatColor.Sat, ChinaHatColor.Value)
 							chinahattrail.CanCollide = false
-							chinahattrail.Transparency = 0.2
+							chinahattrail.Transparency = 0.3
 							local chinahatmesh = Instance.new("SpecialMesh")
 							chinahatmesh.Parent = chinahattrail
 							chinahatmesh.MeshType = "FileMesh"
-							chinahatmesh.MeshId = "rbxassetid://7895567418"
-							chinahatmesh.Scale = Vector3.new(1.3, 1.1, 1.3)
+							chinahatmesh.MeshId = "http://www.roblox.com/asset/?id=1778999"
+							chinahatmesh.Scale = Vector3.new(3, 0.6, 3)
 							chinahattrail.Parent = workspace.Camera
 						end
-						chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 0.3, 0)
+						chinahattrail.CFrame = entityLibrary.character.Head.CFrame * CFrame.new(0, 1.1, 0)
 						chinahattrail.Velocity = Vector3.zero
 						chinahattrail.LocalTransparencyModifier = ((gameCamera.CFrame.Position - gameCamera.Focus.Position).Magnitude <= 0.6 and 1 or 0)
 					else
@@ -5756,7 +5760,7 @@ runFunction(function()
 end)
 
 -- custom modules here
---Lunar Vape
+
 runFunction(function()
 	if replicatedStorageService:FindFirstChild("Themes") then
 		replicatedStorageService:FindFirstChild("Themes"):Destroy()
@@ -6734,11 +6738,11 @@ runFunction(function()
 	local LunarText = Instance.new("TextLabel")
 	LunarText.Position = UDim2.new(0.75,0,0.75,0)
 	LunarText.TextSize = 24
-	LunarText.Text = "Lunar Vape v1.3 | Sub Config | discord.gg/lunarrbx or discord.gg/skqfGVKAYv"
+	LunarText.Text = "Skidware v1.3 | discord.gg/VTueRNbTn4"
 	LunarText.BackgroundTransparency = 1
 	LunarText.ZIndex = 10
 	LunarText.TextScaled = false
 	LunarText.Font = Enum.Font.SourceSansBold
 	LunarText.TextColor3 = Color3.fromRGB(160, 40, 180)
 	LunarText.Parent = GuiLibrary.MainGui.ScaledGui.ClickGui
-end)                                                                                                                       
+end)
